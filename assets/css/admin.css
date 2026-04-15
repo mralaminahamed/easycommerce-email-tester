@@ -1,0 +1,1004 @@
+/* ============================================================
+   EasyCommerce Email Tester — Admin Styles
+   ============================================================ */
+
+/* ---- Scope & wrap ----------------------------------------- */
+.ect-wrap {
+	max-width: 1160px;
+	padding-bottom: 48px;
+}
+
+/* ============================================================
+   HERO  (Dashboard)
+   ============================================================ */
+.ect-hero {
+	background: #1d2327;
+	border-radius: 8px;
+	padding: 36px 40px;
+	margin: 20px 0 24px;
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	position: relative;
+	overflow: hidden;
+}
+
+/* decorative circles */
+.ect-hero::before,
+.ect-hero::after {
+	content: '';
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+}
+.ect-hero::before {
+	width: 260px;
+	height: 260px;
+	background: rgba(255, 255, 255, 0.03);
+	right: -40px;
+	top: -80px;
+}
+.ect-hero::after {
+	width: 160px;
+	height: 160px;
+	background: rgba(255, 255, 255, 0.04);
+	right: 100px;
+	bottom: -60px;
+}
+
+.ect-hero__icon {
+	width: 68px;
+	height: 68px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	z-index: 1;
+}
+
+.ect-hero__icon .dashicons {
+	font-size: 38px;
+	width: 38px;
+	height: 38px;
+	color: #fff;
+}
+
+.ect-hero__body {
+	flex: 1;
+	min-width: 0;
+	z-index: 1;
+}
+
+.ect-hero__title {
+	color: #fff;
+	font-size: 22px;
+	font-weight: 700;
+	margin: 0 0 8px;
+	line-height: 1.25;
+}
+
+.ect-hero__desc {
+	color: rgba(255, 255, 255, 0.65);
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.6;
+	max-width: 540px;
+}
+
+.ect-hero__action {
+	flex-shrink: 0;
+	z-index: 1;
+}
+
+.ect-hero-btn {
+	display: inline-block;
+	background: #2271b1;
+	color: #fff !important;
+	padding: 10px 22px;
+	border-radius: 4px;
+	text-decoration: none !important;
+	font-weight: 600;
+	font-size: 13px;
+	border: none;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background 0.15s ease;
+}
+.ect-hero-btn:hover,
+.ect-hero-btn:focus {
+	background: #135e96;
+	color: #fff !important;
+}
+
+/* ============================================================
+   STAT CARDS  (Dashboard)
+   ============================================================ */
+.ect-stats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.ect-stat-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-top: 4px solid #c3c4c7;
+	border-radius: 6px;
+	padding: 20px 20px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.ect-stat-card--blue  { border-top-color: #2271b1; }
+.ect-stat-card--green { border-top-color: #00a32a; }
+.ect-stat-card--orange { border-top-color: #dba617; }
+.ect-stat-card--neutral { border-top-color: #8c8f94; }
+
+.ect-stat-card__top {
+	margin-bottom: 4px;
+}
+
+.ect-stat-card__icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.ect-stat-card__icon .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.ect-stat-card--blue  .ect-stat-card__icon { background: #dce6f8; color: #2271b1; }
+.ect-stat-card--green .ect-stat-card__icon { background: #d8f5de; color: #1a6b2a; }
+.ect-stat-card--orange .ect-stat-card__icon { background: #fff3cd; color: #7a4f00; }
+.ect-stat-card--neutral .ect-stat-card__icon { background: #f0f0f1; color: #646970; }
+
+.ect-stat-card__value {
+	font-size: 20px;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1.2;
+	word-break: break-all;
+}
+
+.ect-stat-card__label {
+	font-size: 11px;
+	color: #646970;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.ect-stat-card__sub {
+	font-size: 12px;
+	color: #8c8f94;
+}
+
+/* ============================================================
+   FEATURE CARDS  (Dashboard)
+   ============================================================ */
+.ect-features {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
+}
+
+.ect-feature-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 24px;
+	display: flex;
+	align-items: flex-start;
+	gap: 18px;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ect-feature-card:hover {
+	border-color: #2271b1;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+
+.ect-feature-card__icon {
+	width: 46px;
+	height: 46px;
+	background: #f0f6ff;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+.ect-feature-card__icon .dashicons {
+	font-size: 24px;
+	width: 24px;
+	height: 24px;
+	color: #2271b1;
+}
+
+.ect-feature-card__body h3 {
+	font-size: 14px;
+	font-weight: 600;
+	margin: 0 0 6px;
+	color: #1d2327;
+}
+.ect-feature-card__body p {
+	font-size: 13px;
+	color: #646970;
+	margin: 0 0 14px;
+	line-height: 1.55;
+}
+
+.ect-feature-card__link {
+	font-size: 13px;
+	font-weight: 500;
+	color: #2271b1;
+	text-decoration: none;
+}
+.ect-feature-card__link:hover {
+	text-decoration: underline;
+	color: #135e96;
+}
+
+/* ============================================================
+   PAGE HEADER  (Testing / Settings)
+   ============================================================ */
+.ect-page-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	margin: 20px 0 24px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.ect-page-header h1 {
+	font-size: 20px;
+	font-weight: 600;
+	margin: 0 0 4px;
+	color: #1d2327;
+}
+
+.ect-page-header__desc {
+	color: #646970;
+	font-size: 13px;
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* ============================================================
+   CARD  (shared)
+   ============================================================ */
+.ect-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 24px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ect-card-title {
+	font-size: 14px;
+	font-weight: 600;
+	margin: 0 0 20px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid #f0f0f1;
+	color: #1d2327;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* ============================================================
+   TESTING — two-column layout
+   ============================================================ */
+.ect-layout {
+	display: flex;
+	gap: 24px;
+	align-items: flex-start;
+}
+
+.ect-form-card {
+	flex: 0 0 360px;
+	min-width: 300px;
+}
+
+.ect-results-card {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+/* Empty state placeholder */
+.ect-results-empty {
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 60px 24px;
+	color: #c3c4c7;
+}
+.ect-results-empty .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+}
+.ect-results-empty p {
+	font-size: 13px;
+	color: #8c8f94;
+	margin: 0;
+}
+
+/* ============================================================
+   FORM FIELDS
+   ============================================================ */
+.ect-field {
+	margin-bottom: 18px;
+}
+
+.ect-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 6px;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.ect-field input[type="text"],
+.ect-field input[type="email"],
+.ect-field select {
+	width: 100%;
+	max-width: 100%;
+}
+
+.ect-field-divider {
+	margin: 20px 0;
+	border: none;
+	border-top: 1px solid #f0f0f1;
+}
+
+.ect-optional {
+	font-weight: 400;
+	color: #8c8f94;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin-left: 6px;
+}
+
+.ect-hint {
+	margin: 5px 0 0;
+	color: #8c8f94;
+	font-size: 12px;
+	line-height: 1.5;
+}
+.ect-hint a {
+	color: #2271b1;
+}
+
+/* Checkbox / toggle row */
+.ect-toggle-label {
+	display: flex !important;
+	align-items: flex-start;
+	gap: 8px;
+	font-weight: 400 !important;
+	cursor: pointer;
+}
+.ect-toggle-label input[type="checkbox"] {
+	margin-top: 2px;
+	flex-shrink: 0;
+}
+.ect-toggle-text {
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.ect-actions {
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid #f0f0f1;
+}
+
+/* Submit button with icon */
+.ect-submit-btn {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 6px;
+}
+.ect-submit-btn .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	margin-top: -1px;
+}
+
+/* ============================================================
+   NOTICES & BADGES
+   ============================================================ */
+
+/* Inline save notice (Settings) */
+.ect-saved-notice {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: #d8f5de;
+	border: 1px solid #a8d5b0;
+	border-radius: 4px;
+	padding: 10px 14px;
+	margin: 0 0 20px;
+	font-size: 13px;
+	color: #1a4a26;
+	font-weight: 500;
+}
+.ect-saved-notice .dashicons {
+	color: #1a6b2a;
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+/* Generic inline notices (result panel) */
+.ect-notice {
+	padding: 12px 16px;
+	border-radius: 4px;
+	margin: 0 0 16px;
+	font-size: 13px;
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	flex-wrap: wrap;
+	line-height: 1.5;
+}
+.ect-notice--error {
+	background: #fce8e8;
+	border: 1px solid #f5b8b8;
+	border-left: 4px solid #d63638;
+	color: #6b1616;
+}
+.ect-notice--warning {
+	background: #fff8e5;
+	border: 1px solid #f2d787;
+	border-left: 4px solid #dba617;
+	color: #614200;
+}
+.ect-notice-icon {
+	flex-shrink: 0;
+	font-style: normal;
+	line-height: 1.5;
+}
+.ect-unresolved-list {
+	margin: 6px 0 0 4px;
+	padding: 0 0 0 16px;
+	list-style: disc;
+	width: 100%;
+}
+.ect-unresolved-list li {
+	margin-bottom: 3px;
+}
+
+/* Send status line */
+.ect-send-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: #646970;
+	margin-bottom: 20px;
+	padding: 10px 14px;
+	background: #f6f7f7;
+	border-radius: 4px;
+	border: 1px solid #dcdcde;
+}
+
+/* Badges */
+.ect-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 10px;
+	border-radius: 20px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	white-space: nowrap;
+}
+.ect-badge--sent    { background: #d8f5de; color: #1a6b2a; }
+.ect-badge--failed  { background: #fce8e8; color: #d63638; }
+.ect-badge--dryrun  { background: #f0f0f1; color: #646970; }
+.ect-badge--warning { background: #fff8e5; color: #7a4f00; }
+
+/* ============================================================
+   RESULT TABS
+   ============================================================ */
+
+.ect-tabs-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0;
+	border-bottom: 2px solid #dcdcde;
+	margin: 16px 0 0;
+}
+
+.ect-tab-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 9px 16px;
+	font-size: 13px;
+	font-weight: 500;
+	color: #646970;
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -2px;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: color 0.12s ease, border-color 0.12s ease;
+	line-height: 1.4;
+}
+
+.ect-tab-btn:hover {
+	color: #1d2327;
+	background: #f6f7f7;
+}
+
+.ect-tab-btn[aria-selected="true"] {
+	color: #2271b1;
+	border-bottom-color: #2271b1;
+	font-weight: 600;
+	background: transparent;
+}
+
+/* Badges inside tab buttons are smaller */
+.ect-tab-btn .ect-badge {
+	font-size: 10px;
+	padding: 2px 7px;
+}
+
+/* Tab panel */
+.ect-tab-panel[hidden] { display: none; }
+
+.ect-tab-panel {
+	padding-top: 16px;
+}
+
+/* Strip the outer card styling from email-entry when inside a tab panel
+   (the results card already provides the border/shadow container). */
+.ect-tab-panel .ect-email-entry {
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	margin-bottom: 0;
+}
+
+/* ============================================================
+   EMAIL ENTRY
+   ============================================================ */
+.ect-email-entry {
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	margin-bottom: 20px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ect-entry-header {
+	background: #f6f7f7;
+	padding: 12px 16px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border-bottom: 1px solid #dcdcde;
+	flex-wrap: wrap;
+}
+
+.ect-entry-title {
+	font-size: 13px;
+	font-weight: 600;
+	margin: 0;
+	flex-shrink: 0;
+	color: #1d2327;
+}
+
+/* Meta table */
+.ect-meta-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+	margin: 0;
+}
+.ect-meta-table th,
+.ect-meta-table td {
+	padding: 9px 16px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: top;
+}
+.ect-meta-table th {
+	width: 80px;
+	font-weight: 600;
+	font-size: 12px;
+	color: #646970;
+	background: #fafafa;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+/* Section title (Preview label bar) */
+.ect-section-title {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: #646970;
+	margin: 0;
+	padding: 8px 16px;
+	background: #f6f7f7;
+	border-top: 1px solid #dcdcde;
+	border-bottom: 1px solid #dcdcde;
+}
+
+/* Preview iframe */
+.ect-preview-wrap {
+	border-top: 1px solid #dcdcde;
+}
+.ect-preview-iframe {
+	display: block;
+	width: 100%;
+	min-height: 220px;
+	border: none;
+	background: #fff;
+}
+
+/* Source block */
+.ect-source-wrap {
+	border-top: 1px solid #dcdcde;
+	padding: 12px 16px;
+	background: #fafafa;
+}
+.ect-source-block[hidden] { display: none; }
+.ect-source-block {
+	margin-top: 10px;
+}
+.ect-source-textarea {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+	font-size: 12px;
+	line-height: 1.6;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	resize: vertical;
+	background: #fff;
+	padding: 12px 14px;
+	min-height: 180px;
+	color: #1d2327;
+}
+
+/* Placeholders block */
+.ect-placeholders-wrap {
+	border-top: 1px solid #dcdcde;
+	padding: 12px 16px;
+	background: #fafafa;
+}
+.ect-placeholders-block[hidden] { display: none; }
+.ect-placeholders-block {
+	margin-top: 10px;
+	overflow-x: auto;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+.ect-placeholders-table {
+	font-size: 12px;
+	margin: 0 !important;
+}
+.ect-placeholders-table th,
+.ect-placeholders-table td {
+	padding: 7px 14px !important;
+}
+.ect-placeholders-table th {
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	background: #f6f7f7 !important;
+}
+.ect-placeholders-table code {
+	font-size: 11px;
+	background: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+/* ============================================================
+   SELECT2 OVERRIDES
+   ============================================================ */
+
+/* Container */
+.ect-field .select2-container {
+	width: 100% !important;
+}
+
+/* Selection box */
+.ect-field .select2-container--default .select2-selection--single {
+	height: 36px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: none;
+	outline: none;
+	transition: border-color 0.1s ease, box-shadow 0.1s ease;
+}
+.ect-field .select2-container--default .select2-selection--single:hover {
+	border-color: #646970;
+}
+.ect-field .select2-container--default.select2-container--open .select2-selection--single,
+.ect-field .select2-container--default.select2-container--focus .select2-selection--single {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.15);
+}
+
+/* Rendered value */
+.ect-field .select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height: 34px;
+	padding-left: 10px;
+	padding-right: 28px;
+	color: #1d2327;
+	font-size: 13px;
+}
+
+/* Placeholder text */
+.ect-field .select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: #8c8f94;
+}
+
+/* Arrow */
+.ect-field .select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 34px;
+	right: 6px;
+}
+.ect-field .select2-container--default .select2-selection--single .select2-selection__arrow b {
+	border-color: #646970 transparent transparent;
+}
+.ect-field .select2-container--default.select2-container--open .select2-selection__arrow b {
+	border-color: transparent transparent #646970;
+}
+
+/* Clear button */
+.ect-field .select2-container--default .select2-selection--single .select2-selection__clear {
+	color: #8c8f94;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1;
+	margin-right: 6px;
+}
+.ect-field .select2-container--default .select2-selection--single .select2-selection__clear:hover {
+	color: #d63638;
+}
+
+/* Dropdown */
+.select2-dropdown {
+	border: 1px solid #2271b1;
+	border-radius: 4px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	font-size: 13px;
+	z-index: 100010; /* above WP admin bars */
+}
+
+/* Search box inside dropdown */
+.select2-container--default .select2-search--dropdown .select2-search__field {
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	padding: 6px 10px;
+	font-size: 13px;
+	outline: none;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.15);
+}
+
+/* Options */
+.select2-container--default .select2-results__option {
+	padding: 8px 12px;
+	font-size: 13px;
+	color: #1d2327;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background: #2271b1;
+	color: #fff;
+}
+.select2-container--default .select2-results__option[aria-selected="true"] {
+	background: #f0f6ff;
+	color: #2271b1;
+}
+
+/* Loading / searching states */
+.select2-container--default .select2-results__option.loading-results,
+.select2-container--default .select2-results__option.select2-results__message {
+	color: #8c8f94;
+	font-style: italic;
+}
+
+/* ============================================================
+   LOG LIST PAGE
+   ============================================================ */
+
+/* Source badges */
+.ect-badge--source-live { background: #e8f4fc; color: #0d66a3; }
+.ect-badge--source-test { background: #f0eaf8; color: #6a3fa0; }
+
+/* Danger button (Clear All, Delete) */
+.ect-btn-danger {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 5px;
+	color: #d63638 !important;
+	border-color: #d63638 !important;
+}
+.ect-btn-danger:hover {
+	background: #d63638 !important;
+	color: #fff !important;
+}
+.ect-btn-danger .dashicons {
+	font-size: 15px;
+	width: 15px;
+	height: 15px;
+}
+
+/* Page header actions slot */
+.ect-page-header__actions {
+	flex-shrink: 0;
+}
+
+/* WP list table tweaks inside our card */
+#ect-log-list-form .wp-list-table {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	overflow: hidden;
+}
+#ect-log-list-form .wp-list-table th,
+#ect-log-list-form .wp-list-table td {
+	padding: 8px 12px;
+	font-size: 13px;
+}
+#ect-log-list-form .wp-list-table .column-id    { width: 60px; }
+#ect-log-list-form .wp-list-table .column-timestamp { width: 160px; }
+#ect-log-list-form .wp-list-table .column-status { width: 80px; }
+#ect-log-list-form .wp-list-table .column-source { width: 70px; }
+
+/* Log list empty state */
+.ect-log-empty {
+	text-align: center;
+	padding: 48px 24px;
+	color: #8c8f94;
+	font-size: 13px;
+}
+
+/* ============================================================
+   LOG VIEW PAGE
+   ============================================================ */
+
+.ect-back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 14px;
+	font-weight: 400;
+	color: #2271b1;
+	text-decoration: none;
+}
+.ect-back-link:hover { text-decoration: underline; }
+.ect-back-link .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.ect-log-view {
+	display: grid;
+	grid-template-columns: 340px 1fr;
+	gap: 24px;
+	align-items: flex-start;
+}
+
+.ect-log-meta-card .ect-source-wrap {
+	margin-top: 12px;
+}
+
+.ect-log-error {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	color: #d63638;
+}
+
+/* ============================================================
+   SETTINGS — logger section
+   ============================================================ */
+
+.ect-settings-section-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+	margin: 0 0 14px;
+	padding: 0;
+	border: none;
+}
+
+.ect-retention-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 8px;
+	font-size: 13px;
+	color: #646970;
+}
+
+.ect-retention-row input[type="number"] {
+	width: 80px;
+}
+
+/* Settings layout — wider to accommodate two cards */
+.ect-settings-layout {
+	max-width: 680px;
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+.ect-settings-layout {
+	max-width: 560px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media screen and (max-width: 960px) {
+	.ect-layout {
+		flex-direction: column;
+	}
+	.ect-form-card {
+		flex: none;
+		width: 100%;
+		max-width: 480px;
+	}
+	.ect-results-empty {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.ect-hero {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 28px 24px;
+	}
+	.ect-hero__action {
+		width: 100%;
+	}
+	.ect-hero-btn {
+		width: 100%;
+		text-align: center;
+	}
+	.ect-stats {
+		grid-template-columns: 1fr;
+	}
+	.ect-features {
+		grid-template-columns: 1fr;
+	}
+	.ect-page-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+}
