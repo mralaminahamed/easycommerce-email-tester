@@ -151,41 +151,6 @@ $status_mod   = $is_sent ? 'sent' : 'failed';
 				</div>
 			<?php endif; ?>
 
-			<!-- JSON source -->
-			<?php
-			$json_data = wp_json_encode(
-				[
-					'id'          => (int) $log->id,
-					'timestamp'   => $log->timestamp,
-					'to'          => $log->to_email,
-					'subject'     => $log->subject,
-					'status'      => $is_sent ? 'sent' : 'failed',
-					'source'      => $log->source,
-					'headers'     => $log->headers,
-					'attachments' => $log->attachments,
-					'error'       => $log->error,
-					'message'     => $log->message,
-				],
-				JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-			);
-			?>
-			<div class="ect-collapsible">
-				<button
-					type="button"
-					class="ect-collapsible-toggle ect-toggle-source"
-					aria-expanded="false"
-					data-target="ect-log-json"
-					data-label-show="<?php esc_attr_e( 'Show JSON', 'easycommerce-email-tester' ); ?>"
-					data-label-hide="<?php esc_attr_e( 'Hide JSON', 'easycommerce-email-tester' ); ?>"
-				>
-					<?php EC_Email_Tester_Icons::render( 'braces' ); ?>
-					<span class="ect-toggle-label-text"><?php esc_html_e( 'Show JSON', 'easycommerce-email-tester' ); ?></span>
-					<?php EC_Email_Tester_Icons::render( 'chevron-down' ); ?>
-				</button>
-				<div class="ect-collapsible-body" id="ect-log-json" hidden>
-					<textarea class="ect-source-textarea ect-source-textarea--json" readonly><?php echo esc_textarea( $json_data ); ?></textarea>
-				</div>
-			</div>
 		</div>
 
 		<!-- ---- Email body preview card (right column) ---- -->
@@ -220,6 +185,42 @@ $status_mod   = $is_sent ? 'sent' : 'failed';
 				</button>
 				<div class="ect-collapsible-body" id="ect-log-body-source" hidden>
 					<textarea class="ect-source-textarea" readonly><?php echo esc_textarea( $log->message ); ?></textarea>
+				</div>
+			</div>
+
+			<!-- JSON source -->
+			<?php
+			$json_data = wp_json_encode(
+				[
+					'id'          => (int) $log->id,
+					'timestamp'   => $log->timestamp,
+					'to'          => $log->to_email,
+					'subject'     => $log->subject,
+					'status'      => $is_sent ? 'sent' : 'failed',
+					'source'      => $log->source,
+					'headers'     => $log->headers,
+					'attachments' => $log->attachments,
+					'error'       => $log->error,
+					'message'     => $log->message,
+				],
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+			);
+			?>
+			<div class="ect-collapsible">
+				<button
+					type="button"
+					class="ect-collapsible-toggle ect-toggle-source"
+					aria-expanded="false"
+					data-target="ect-log-json"
+					data-label-show="<?php esc_attr_e( 'Show JSON', 'easycommerce-email-tester' ); ?>"
+					data-label-hide="<?php esc_attr_e( 'Hide JSON', 'easycommerce-email-tester' ); ?>"
+				>
+					<?php EC_Email_Tester_Icons::render( 'braces' ); ?>
+					<span class="ect-toggle-label-text"><?php esc_html_e( 'Show JSON', 'easycommerce-email-tester' ); ?></span>
+					<?php EC_Email_Tester_Icons::render( 'chevron-down' ); ?>
+				</button>
+				<div class="ect-collapsible-body" id="ect-log-json" hidden>
+					<textarea class="ect-source-textarea ect-source-textarea--json" readonly><?php echo esc_textarea( $json_data ); ?></textarea>
 				</div>
 			</div>
 		</div>
