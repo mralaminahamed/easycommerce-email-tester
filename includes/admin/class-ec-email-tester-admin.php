@@ -45,6 +45,7 @@ class EC_Email_Tester_Admin {
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'dequeue_foreign_assets' ], PHP_INT_MAX );
 		add_filter( 'admin_body_class', [ $this, 'filter_admin_body_class' ], PHP_INT_MAX );
 	}
 
@@ -98,15 +99,15 @@ class EC_Email_Tester_Admin {
 			$this->page_hooks[] = $hook;
 		}
 
-		// Email Logs sub-page — guard against missing table on first install.
+		// Logs sub-page — guard against missing table on first install.
 		$log_count   = EC_Email_Tester_Logger::table_exists() ? EC_Email_Tester_Logger::count_logs() : 0;
 		$logs_label  = $log_count > 0
-			? sprintf( 'Email Logs <span class="awaiting-mod">%d</span>', $log_count )
-			: 'Email Logs';
+			? sprintf( 'Logs <span class="awaiting-mod">%d</span>', $log_count )
+			: 'Logs';
 
 		$hook = add_submenu_page(
 			'easycommerce-email-tester',
-			__( 'Email Logs — Email Tester', 'easycommerce-email-tester' ),
+			__( 'Logs — Email Tester', 'easycommerce-email-tester' ),
 			$logs_label,
 			'manage_options',
 			'easycommerce-email-tester-logs',
@@ -182,6 +183,69 @@ class EC_Email_Tester_Admin {
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 			]
 		);
+	}
+
+	/**
+	 * Dequeue styles and scripts registered by other plugins or the active theme
+	 * on our own admin pages.
+	 *
+	 * Assets whose src URL resolves inside wp-includes/ or wp-admin/ (WordPress
+	 * core) and assets with our own handle prefix are preserved. Everything else
+	 * is dequeued so third-party plugins and themes cannot interfere with the
+	 * plugin UI.
+	 *
+	 * @since 1.0.0
+	 * @hooked admin_enqueue_scripts (PHP_INT_MAX)
+	 *
+	 * @param string $hook Current admin page hook suffix.
+	 */
+	public function dequeue_foreign_assets( string $hook ): void {
+		if ( ! in_array( $hook, $this->page_hooks, true ) ) {
+			return;
+		}
+
+		// Base URLs for the two locations we want to strip from.
+		$plugins_url = trailingslashit( plugins_url() );        // .../wp-content/plugins/
+		$themes_url  = trailingslashit( get_theme_root_uri() ); // .../wp-content/themes/
+		$our_url     = EC_EMAIL_TESTER_URL;                     // .../wp-content/plugins/easycommerce-email-tester/
+
+		/**
+		 * Returns true if the asset originates from another plugin or a theme.
+		 *
+		 * Assets with no src (pseudo-handles / inline-only) and assets from our
+		 * own plugin are never considered foreign.
+		 *
+		 * @param string $src Fully-resolved source URL.
+		 */
+		$is_foreign = static function ( string $src ) use ( $plugins_url, $themes_url, $our_url ): bool {
+			// No src → not foreign (pseudo-handle or inline-only).
+			if ( '' === $src ) {
+				return false;
+			}
+			// Our own plugin assets → not foreign.
+			if ( str_starts_with( $src, $our_url ) ) {
+				return false;
+			}
+			// Another plugin or any theme → foreign.
+			return str_starts_with( $src, $plugins_url ) || str_starts_with( $src, $themes_url );
+		};
+
+		$styles  = wp_styles();
+		$scripts = wp_scripts();
+
+		foreach ( $styles->queue as $handle ) {
+			$dep = $styles->registered[ $handle ] ?? null;
+			if ( $dep && $is_foreign( (string) ( $dep->src ?? '' ) ) ) {
+				wp_dequeue_style( $handle );
+			}
+		}
+
+		foreach ( $scripts->queue as $handle ) {
+			$dep = $scripts->registered[ $handle ] ?? null;
+			if ( $dep && $is_foreign( (string) ( $dep->src ?? '' ) ) ) {
+				wp_dequeue_script( $handle );
+			}
+		}
 	}
 
 	/**
