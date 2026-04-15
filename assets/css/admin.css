@@ -58,8 +58,21 @@
 	z-index: 1;
 }
 
-.ect-hero__icon .dashicons {
-	font-size: 38px;
+.ect-icon {
+	display: inline-block;
+	flex-shrink: 0;
+	vertical-align: -0.125em;
+	width: 16px;
+	height: 16px;
+}
+
+.ect-card-title .ect-icon {
+	width: 16px;
+	height: 16px;
+	color: #646970;
+}
+
+.ect-hero__icon .ect-icon {
 	width: 38px;
 	height: 38px;
 	color: #fff;
@@ -150,8 +163,7 @@
 	align-items: center;
 	justify-content: center;
 }
-.ect-stat-card__icon .dashicons {
-	font-size: 20px;
+.ect-stat-card__icon .ect-icon {
 	width: 20px;
 	height: 20px;
 }
@@ -216,8 +228,7 @@
 	justify-content: center;
 	flex-shrink: 0;
 }
-.ect-feature-card__icon .dashicons {
-	font-size: 24px;
+.ect-feature-card__icon .ect-icon {
 	width: 24px;
 	height: 24px;
 	color: #2271b1;
@@ -299,6 +310,10 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+.ect-card:not(:last-child){
+	margin-bottom: 20px;
+}
+
 .ect-card-title {
 	font-size: 14px;
 	font-weight: 600;
@@ -342,8 +357,7 @@
 	padding: 60px 24px;
 	color: #c3c4c7;
 }
-.ect-results-empty .dashicons {
-	font-size: 48px;
+.ect-results-empty .ect-icon {
 	width: 48px;
 	height: 48px;
 	margin-bottom: 12px;
@@ -420,22 +434,10 @@
 
 .ect-actions {
 	margin-top: 24px;
-	padding-top: 16px;
+	/*padding-top: 16px;*/
 	border-top: 1px solid #f0f0f1;
 }
 
-/* Submit button with icon */
-.ect-submit-btn {
-	display: inline-flex !important;
-	align-items: center;
-	gap: 6px;
-}
-.ect-submit-btn .dashicons {
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-	margin-top: -1px;
-}
 
 /* ============================================================
    NOTICES & BADGES
@@ -455,11 +457,19 @@
 	color: #1a4a26;
 	font-weight: 500;
 }
-.ect-saved-notice .dashicons {
+.ect-saved-notice .ect-icon {
 	color: #1a6b2a;
-	font-size: 18px;
 	width: 18px;
 	height: 18px;
+	flex-shrink: 0;
+}
+.ect-saved-notice--error {
+	background: #fce8e8;
+	border-color: #f5b8b8;
+	color: #6b1616;
+}
+.ect-saved-notice--error .ect-icon {
+	color: #d63638;
 }
 
 /* Generic inline notices (result panel) */
@@ -846,32 +856,74 @@
 	background: #d63638 !important;
 	color: #fff !important;
 }
-.ect-btn-danger .dashicons {
-	font-size: 15px;
-	width: 15px;
-	height: 15px;
-}
 
 /* Page header actions slot */
 .ect-page-header__actions {
 	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+}
+
+/* Inline form (e.g. Clear All button in page header) */
+.ect-form-inline {
+	display: inline;
+}
+
+/* Logs card — no padding so the list table runs edge-to-edge */
+.ect-logs-card {
+	padding: 0;
+	overflow: hidden;
+}
+
+.ect-logs-card .ect-card-title {
+	padding: 16px 24px 14px;
+	margin-bottom: 0;
+}
+
+/* Search + view-filter bar */
+.ect-logs-controls {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 10px 24px;
+	border-bottom: 1px solid #f0f0f1;
+	background: #fafafa;
+}
+
+.ect-logs-controls .search-box {
+	margin: 0;
+}
+
+.ect-logs-controls .subsubsub {
+	margin: 0;
+	padding: 0;
+	float: none;
+	font-size: 13px;
 }
 
 /* WP list table tweaks inside our card */
 #ect-log-list-form .wp-list-table {
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border: none;
+	border-radius: 0;
 	overflow: hidden;
 }
 #ect-log-list-form .wp-list-table th,
 #ect-log-list-form .wp-list-table td {
-	padding: 8px 12px;
+	padding: 8px 16px;
 	font-size: 13px;
 }
-#ect-log-list-form .wp-list-table .column-id    { width: 60px; }
+#ect-log-list-form .wp-list-table .column-id        { width: 60px; }
 #ect-log-list-form .wp-list-table .column-timestamp { width: 160px; }
-#ect-log-list-form .wp-list-table .column-status { width: 80px; }
-#ect-log-list-form .wp-list-table .column-source { width: 70px; }
+#ect-log-list-form .wp-list-table .column-status    { width: 80px; }
+#ect-log-list-form .wp-list-table .column-source    { width: 70px; }
+
+/* Bulk-action bar above/below table */
+#ect-log-list-form .tablenav {
+	padding-left: 16px;
+	padding-right: 16px;
+}
 
 /* Disabled/dimmed state — applied by JS when parent checkbox is unchecked */
 .ect-disabled {
@@ -894,8 +946,7 @@
 	text-decoration: none;
 }
 .ect-back-link:hover { text-decoration: underline; }
-.ect-back-link .dashicons {
-	font-size: 18px;
+.ect-back-link .ect-icon {
 	width: 18px;
 	height: 18px;
 }
