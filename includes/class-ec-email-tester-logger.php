@@ -42,13 +42,13 @@ class EC_Email_Tester_Logger {
 	const SETTINGS_OPTION = 'ec_email_tester_settings';
 
 	/**
-	 * ID of the most-recently inserted log row.
-	 * Used by wp_mail_failed to flip the status to 0 (failed).
+	 * Mail args captured from the wp_mail filter, pending the actual send result.
+	 * Cleared after each send attempt (success or failure).
 	 *
 	 * @since 1.0.0
-	 * @var int|null
+	 * @var array|null
 	 */
-	private ?int $last_log_id = null;
+	private ?array $pending_log = null;
 
 	/**
 	 * Whether the current wp_mail() call originated from the Testing page.
@@ -75,11 +75,14 @@ class EC_Email_Tester_Logger {
 			return;
 		}
 
-		// Capture mail args just before PHPMailer dispatches.
+		// Capture mail args in the filter — side-effect-free, no DB write here.
+		// This lets SMTP plugins (WP Mail SMTP, FluentSMTP, etc.) configure
+		// PHPMailer freely via phpmailer_init without interference.
 		add_filter( 'wp_mail', [ $this, 'capture_mail' ], PHP_INT_MAX );
 
-		// Flip the most-recent log to "failed" on send error.
-		add_action( 'wp_mail_failed', [ $this, 'capture_failure' ] );
+		// Write to the DB only after the send attempt completes (WP 5.9+).
+		add_action( 'wp_mail_succeeded', [ $this, 'capture_success' ] );
+		add_action( 'wp_mail_failed',    [ $this, 'capture_failure' ] );
 
 		// Allow the Testing page to tag its sends as source='test'.
 		add_action( 'ec_email_tester_before_test_send', [ $this, 'mark_as_test' ] );
@@ -91,11 +94,15 @@ class EC_Email_Tester_Logger {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * wp_mail filter callback — log the outgoing mail, return args unchanged.
+	 * wp_mail filter callback — capture args for later, return unchanged.
 	 *
-	 * NOTE: This filter only fires when wp_mail() is NOT short-circuited by
-	 * pre_wp_mail.  Dry-run test emails (which use pre_wp_mail to block send)
-	 * are intentionally NOT logged because they were never dispatched.
+	 * This callback is intentionally side-effect-free: it stores the args in
+	 * $this->pending_log and immediately returns them.  No DB writes happen here
+	 * so external SMTP plugins (WP Mail SMTP, FluentSMTP, Postmark, etc.) can
+	 * reconfigure PHPMailer via phpmailer_init without any interference.
+	 *
+	 * Dry-run test emails short-circuit via pre_wp_mail before PHPMailer runs,
+	 * so wp_mail_succeeded never fires for them — they are never logged.
 	 *
 	 * @since 1.0.0
 	 *
@@ -107,9 +114,64 @@ class EC_Email_Tester_Logger {
 
 		// Honour the "also log test emails" preference.
 		if ( $this->is_test_send && ! $settings['logger_log_test_emails'] ) {
+			$this->pending_log = null;
 			return $args;
 		}
 
+		// Just stash; the actual DB insert happens in capture_success / capture_failure.
+		$this->pending_log = $args;
+
+		return $args;
+	}
+
+	/**
+	 * wp_mail_succeeded action — insert a "sent" log row.
+	 *
+	 * Fires after PHPMailer successfully dispatches the message (WP 5.9+).
+	 * Using the pending args captured in capture_mail so we have the full
+	 * message body even when an SMTP plugin altered the transport.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $mail_data Mail data array passed by core (to/subject/message/headers/attachments).
+	 */
+	public function capture_success( array $mail_data ): void {
+		if ( null === $this->pending_log ) {
+			return;
+		}
+
+		$this->insert_log( $this->pending_log, 1, '' );
+		$this->pending_log = null;
+	}
+
+	/**
+	 * wp_mail_failed action — insert a "failed" log row.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_Error $error PHPMailer error.
+	 */
+	public function capture_failure( \WP_Error $error ): void {
+		$args = $this->pending_log;
+		$this->pending_log = null;
+
+		if ( null === $args ) {
+			return;
+		}
+
+		$this->insert_log( $args, 0, $error->get_error_message() );
+	}
+
+	/**
+	 * Write one row to the log table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array  $args   wp_mail()-style args array.
+	 * @param int    $status 1 = sent, 0 = failed.
+	 * @param string $error  Error message (empty on success).
+	 */
+	private function insert_log( array $args, int $status, string $error ): void {
 		global $wpdb;
 
 		$to          = is_array( $args['to'] ) ? implode( ', ', $args['to'] ) : (string) $args['to'];
@@ -125,44 +187,12 @@ class EC_Email_Tester_Logger {
 				'message'     => (string) ( $args['message'] ?? '' ),
 				'headers'     => $headers,
 				'attachments' => mb_substr( $attachments, 0, 1000 ),
-				'status'      => 1,
-				'error'       => '',
+				'status'      => $status,
+				'error'       => mb_substr( $error, 0, 500 ),
 				'source'      => $this->is_test_send ? 'test' : 'live',
 			],
 			[ '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s' ]
 		);
-
-		$this->last_log_id = ! empty( $wpdb->insert_id ) ? (int) $wpdb->insert_id : null;
-
-		return $args;
-	}
-
-	/**
-	 * wp_mail_failed action — update the most-recent log row to failed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \WP_Error $error PHPMailer error.
-	 */
-	public function capture_failure( \WP_Error $error ): void {
-		if ( null === $this->last_log_id ) {
-			return;
-		}
-
-		global $wpdb;
-
-		$wpdb->update(
-			self::table(),
-			[
-				'status' => 0,
-				'error'  => mb_substr( $error->get_error_message(), 0, 500 ),
-			],
-			[ 'id' => $this->last_log_id ],
-			[ '%d', '%s' ],
-			[ '%d' ]
-		);
-
-		$this->last_log_id = null;
 	}
 
 	/**
