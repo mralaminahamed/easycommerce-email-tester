@@ -29,8 +29,8 @@ $source_label = $is_test ? __( 'Test', 'easycommerce-email-tester' ) : __( 'Live
 	<div class="ect-page-header">
 		<div class="ect-page-header__body">
 			<a href="<?php echo esc_url( $back_url ); ?>" class="ect-back-link">
-				<span class="dashicons dashicons-arrow-left-alt"></span>
-				<?php esc_html_e( 'Email Logs', 'easycommerce-email-tester' ); ?>
+				<?php EC_Email_Tester_Icons::render( 'arrow-left' ); ?>
+				<?php esc_html_e( 'Logs', 'easycommerce-email-tester' ); ?>
 			</a>
 			<h1>
 				<?php
@@ -57,7 +57,6 @@ $source_label = $is_test ? __( 'Test', 'easycommerce-email-tester' ) : __( 'Live
 				class="button ect-btn-danger"
 				onclick="return confirm('<?php echo esc_js( __( 'Delete this log entry?', 'easycommerce-email-tester' ) ); ?>')"
 			>
-				<span class="dashicons dashicons-trash"></span>
 				<?php esc_html_e( 'Delete', 'easycommerce-email-tester' ); ?>
 			</a>
 		</div>

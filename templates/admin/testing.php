@@ -165,8 +165,7 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 
 				<div class="ect-actions">
-					<button type="submit" class="button button-primary ect-submit-btn">
-						<span class="dashicons dashicons-email-alt"></span>
+					<button type="submit" class="button button-primary">
 						<?php esc_html_e( 'Send Test Email', 'easycommerce-email-tester' ); ?>
 					</button>
 				</div>
@@ -182,7 +181,7 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		<?php else : ?>
 			<div class="ect-results-empty">
-				<span class="dashicons dashicons-email-alt2"></span>
+				<?php EC_Email_Tester_Icons::render( 'send' ); ?>
 				<p><?php esc_html_e( 'Results will appear here after you trigger an email.', 'easycommerce-email-tester' ); ?></p>
 			</div>
 		<?php endif; ?>

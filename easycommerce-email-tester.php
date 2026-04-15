@@ -36,6 +36,7 @@ define( 'EC_EMAIL_TESTER_URL', plugin_dir_url( __FILE__ ) );
 define( 'EC_EMAIL_TESTER_FILE', __FILE__ );
 define( 'EC_EMAIL_TESTER_MIN_PHP_VERSION', '8.0' );
 
+require_once EC_EMAIL_TESTER_PATH . 'includes/class-ec-email-tester-icons.php';
 require_once EC_EMAIL_TESTER_PATH . 'includes/class-ec-email-tester-sender.php';
 require_once EC_EMAIL_TESTER_PATH . 'includes/class-ec-email-tester-logger.php';
 require_once EC_EMAIL_TESTER_PATH . 'includes/api/class-ec-email-tester-api.php';

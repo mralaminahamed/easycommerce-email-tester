@@ -25,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
 	     ============================================================ -->
 	<div class="ect-hero">
 		<div class="ect-hero__icon">
-			<span class="dashicons dashicons-email-alt2"></span>
+			<?php EC_Email_Tester_Icons::render( 'send' ); ?>
 		</div>
 		<div class="ect-hero__body">
 			<h1 class="ect-hero__title"><?php esc_html_e( 'EasyCommerce Email Tester', 'easycommerce-email-tester' ); ?></h1>
@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="ect-stat-card ect-stat-card--blue">
 			<div class="ect-stat-card__top">
 				<div class="ect-stat-card__icon">
-					<span class="dashicons dashicons-email-alt2"></span>
+					<?php EC_Email_Tester_Icons::render( 'send' ); ?>
 				</div>
 			</div>
 			<span class="ect-stat-card__value"><?php echo esc_html( (string) $email_type_count ); ?></span>
@@ -58,7 +58,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="ect-stat-card <?php echo ! empty( $settings['default_override_email'] ) ? 'ect-stat-card--green' : 'ect-stat-card--neutral'; ?>">
 			<div class="ect-stat-card__top">
 				<div class="ect-stat-card__icon">
-					<span class="dashicons dashicons-email"></span>
+					<?php EC_Email_Tester_Icons::render( 'mail' ); ?>
 				</div>
 			</div>
 			<span class="ect-stat-card__value">
@@ -75,7 +75,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="ect-stat-card <?php echo $settings['default_dry_run'] ? 'ect-stat-card--orange' : 'ect-stat-card--green'; ?>">
 			<div class="ect-stat-card__top">
 				<div class="ect-stat-card__icon">
-					<span class="dashicons <?php echo $settings['default_dry_run'] ? 'dashicons-visibility' : 'dashicons-yes-alt'; ?>"></span>
+					<?php EC_Email_Tester_Icons::render( $settings['default_dry_run'] ? 'eye' : 'circle-check' ); ?>
 				</div>
 			</div>
 			<span class="ect-stat-card__value">
@@ -100,7 +100,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<div class="ect-feature-card">
 			<div class="ect-feature-card__icon">
-				<span class="dashicons dashicons-email-alt"></span>
+				<?php EC_Email_Tester_Icons::render( 'mail' ); ?>
 			</div>
 			<div class="ect-feature-card__body">
 				<h3><?php esc_html_e( 'Testing', 'easycommerce-email-tester' ); ?></h3>
@@ -113,7 +113,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<div class="ect-feature-card">
 			<div class="ect-feature-card__icon">
-				<span class="dashicons dashicons-admin-settings"></span>
+				<?php EC_Email_Tester_Icons::render( 'settings' ); ?>
 			</div>
 			<div class="ect-feature-card__body">
 				<h3><?php esc_html_e( 'Settings', 'easycommerce-email-tester' ); ?></h3>

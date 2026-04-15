@@ -39,7 +39,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<?php if ( $saved ) : ?>
 		<div class="ect-saved-notice">
-			<span class="dashicons dashicons-yes-alt"></span>
+			<?php EC_Email_Tester_Icons::render( 'circle-check' ); ?>
 			<?php esc_html_e( 'Settings saved successfully.', 'easycommerce-email-tester' ); ?>
 		</div>
 	<?php endif; ?>
@@ -114,7 +114,7 @@ defined( 'ABSPATH' ) || exit;
 			<div class="ect-card">
 
 				<h2 class="ect-card-title">
-					<span class="dashicons dashicons-list-view"></span>
+					<?php EC_Email_Tester_Icons::render( 'list' ); ?>
 					<?php esc_html_e( 'Email Logger', 'easycommerce-email-tester' ); ?>
 				</h2>
 
@@ -133,7 +133,7 @@ defined( 'ABSPATH' ) || exit;
 						</span>
 					</label>
 					<p class="ect-hint">
-						<?php esc_html_e( 'Capture every outgoing wp_mail() call and store it in the Email Logs table. Logs are accessible from the Email Logs page in this plugin\'s menu.', 'easycommerce-email-tester' ); ?>
+						<?php esc_html_e( 'Capture every outgoing wp_mail() call and store it in the log table. Logs are accessible from the Logs page in this plugin\'s menu.', 'easycommerce-email-tester' ); ?>
 					</p>
 				</div>
 
@@ -256,8 +256,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<!-- Save button — applies to the entire form, not just the logger section -->
 		<div class="ect-actions">
-			<button type="submit" class="button button-primary ect-submit-btn">
-				<span class="dashicons dashicons-saved"></span>
+			<button type="submit" class="button button-primary">
 				<?php esc_html_e( 'Save Settings', 'easycommerce-email-tester' ); ?>
 			</button>
 		</div>
