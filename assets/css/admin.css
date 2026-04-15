@@ -691,6 +691,12 @@
 	color: #1d2327;
 }
 
+.ect-source-textarea--json {
+	min-height: 260px;
+	background: #f8f9fa;
+	color: #0a3069;
+}
+
 /* Placeholders block */
 .ect-placeholders-wrap {
 	border-top: 1px solid #dcdcde;
