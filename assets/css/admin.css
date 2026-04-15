@@ -1096,14 +1096,35 @@
 .ect-collapsible-body[hidden] { display: none; }
 .ect-collapsible-body { padding-bottom: 4px; }
 
-/* Preview iframe in log-view — bleeds edge-to-edge inside the card */
+/* Preview card — no padding so iframe and collapsible run edge-to-edge */
+.ect-log-body-card {
+	padding: 0;
+	overflow: hidden;
+}
+.ect-log-body-card .ect-card-title {
+	padding: 16px 24px 14px;
+	margin-bottom: 0;
+}
+.ect-log-body-card .ect-collapsible {
+	margin-top: 0;
+	padding: 0 24px;
+}
+
+/* Preview iframe — full-bleed, no extra space around it */
 .ect-log-preview-wrap {
-	margin: 0 -24px;
 	border-top: 1px solid #f0f0f1;
 	border-bottom: 1px solid #f0f0f1;
 }
 .ect-log-preview-wrap .ect-preview-iframe {
 	min-height: 360px;
+}
+
+/* Meta card — tighten padding on the list */
+.ect-log-meta-card .ect-meta-list {
+	margin-top: -4px;
+}
+.ect-log-meta-card .ect-collapsible {
+	padding-bottom: 4px;
 }
 
 .ect-log-error {

@@ -159,7 +159,7 @@ $status_mod   = $is_sent ? 'sent' : 'failed';
 				<?php esc_html_e( 'Email Preview', 'easycommerce-email-tester' ); ?>
 			</h2>
 
-			<div class="ect-preview-wrap ect-log-preview-wrap">
+			<div class="ect-log-preview-wrap">
 				<iframe
 					class="ect-preview-iframe"
 					srcdoc="<?php echo esc_attr( $preview ); ?>"
