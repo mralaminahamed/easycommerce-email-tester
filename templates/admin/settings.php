@@ -137,124 +137,130 @@ defined( 'ABSPATH' ) || exit;
 					</p>
 				</div>
 
-				<!-- Log test emails -->
-				<div class="ect-field">
-					<label class="ect-toggle-label">
-						<input
-							type="checkbox"
-							name="logger_log_test_emails"
-							value="1"
-							id="ect-logger-log-test"
-							<?php checked( $settings['logger_log_test_emails'] ); ?>
-						/>
-						<span class="ect-toggle-text">
-							<?php esc_html_e( 'Also log test emails', 'easycommerce-email-tester' ); ?>
-						</span>
-					</label>
-					<p class="ect-hint">
-						<?php esc_html_e( 'When checked, emails triggered from the Testing page (non-dry-run) are recorded with source "Test". Uncheck to log only real application emails.', 'easycommerce-email-tester' ); ?>
-					</p>
-				</div>
+				<!-- Child fields — visually dimmed when logging is disabled -->
+				<div class="ect-logger-dependents">
 
-				<div class="ect-field-divider"></div>
-
-				<h3 class="ect-settings-section-title"><?php esc_html_e( 'Log Retention', 'easycommerce-email-tester' ); ?></h3>
-
-				<!-- Retention by count -->
-				<div class="ect-field">
-					<label class="ect-toggle-label">
-						<input
-							type="checkbox"
-							name="logger_retention_count_enabled"
-							value="1"
-							id="ect-logger-retention-count-enabled"
-							<?php checked( $settings['logger_retention_count_enabled'] ); ?>
-						/>
-						<span class="ect-toggle-text">
-							<?php esc_html_e( 'Limit by count', 'easycommerce-email-tester' ); ?>
-						</span>
-					</label>
-					<div class="ect-retention-row">
-						<label for="ect-logger-retention-count" class="screen-reader-text">
-							<?php esc_html_e( 'Number of logs to keep', 'easycommerce-email-tester' ); ?>
+					<!-- Log test emails -->
+					<div class="ect-field">
+						<label class="ect-toggle-label">
+							<input
+								type="checkbox"
+								name="logger_log_test_emails"
+								value="1"
+								id="ect-logger-log-test"
+								<?php checked( $settings['logger_log_test_emails'] ); ?>
+							/>
+							<span class="ect-toggle-text">
+								<?php esc_html_e( 'Also log test emails', 'easycommerce-email-tester' ); ?>
+							</span>
 						</label>
-						<?php esc_html_e( 'Keep the newest', 'easycommerce-email-tester' ); ?>
-						<input
-							type="number"
-							id="ect-logger-retention-count"
-							name="logger_retention_count"
-							value="<?php echo esc_attr( (string) $settings['logger_retention_count'] ); ?>"
-							min="1"
-							step="1"
-							class="small-text"
-						/>
-						<?php esc_html_e( 'log entries (oldest are deleted automatically).', 'easycommerce-email-tester' ); ?>
+						<p class="ect-hint">
+							<?php esc_html_e( 'When checked, emails triggered from the Testing page (non-dry-run) are recorded with source "Test". Uncheck to log only real application emails.', 'easycommerce-email-tester' ); ?>
+						</p>
 					</div>
-				</div>
 
-				<!-- Retention by age -->
-				<div class="ect-field">
-					<label class="ect-toggle-label">
-						<input
-							type="checkbox"
-							name="logger_retention_days_enabled"
-							value="1"
-							id="ect-logger-retention-days-enabled"
-							<?php checked( $settings['logger_retention_days_enabled'] ); ?>
-						/>
-						<span class="ect-toggle-text">
-							<?php esc_html_e( 'Limit by age', 'easycommerce-email-tester' ); ?>
-						</span>
-					</label>
-					<div class="ect-retention-row">
-						<label for="ect-logger-retention-days" class="screen-reader-text">
-							<?php esc_html_e( 'Days to keep logs', 'easycommerce-email-tester' ); ?>
+					<div class="ect-field-divider"></div>
+
+					<h3 class="ect-settings-section-title"><?php esc_html_e( 'Log Retention', 'easycommerce-email-tester' ); ?></h3>
+
+					<!-- Retention by count -->
+					<div class="ect-field">
+						<label class="ect-toggle-label">
+							<input
+								type="checkbox"
+								name="logger_retention_count_enabled"
+								value="1"
+								id="ect-logger-retention-count-enabled"
+								<?php checked( $settings['logger_retention_count_enabled'] ); ?>
+							/>
+							<span class="ect-toggle-text">
+								<?php esc_html_e( 'Limit by count', 'easycommerce-email-tester' ); ?>
+							</span>
 						</label>
-						<?php esc_html_e( 'Delete logs older than', 'easycommerce-email-tester' ); ?>
-						<input
-							type="number"
-							id="ect-logger-retention-days"
-							name="logger_retention_days"
-							value="<?php echo esc_attr( (string) $settings['logger_retention_days'] ); ?>"
-							min="1"
-							step="1"
-							class="small-text"
-						/>
-						<?php esc_html_e( 'days.', 'easycommerce-email-tester' ); ?>
+						<div class="ect-retention-row">
+							<label for="ect-logger-retention-count" class="screen-reader-text">
+								<?php esc_html_e( 'Number of logs to keep', 'easycommerce-email-tester' ); ?>
+							</label>
+							<?php esc_html_e( 'Keep the newest', 'easycommerce-email-tester' ); ?>
+							<input
+								type="number"
+								id="ect-logger-retention-count"
+								name="logger_retention_count"
+								value="<?php echo esc_attr( (string) $settings['logger_retention_count'] ); ?>"
+								min="1"
+								step="1"
+								class="small-text"
+							/>
+							<?php esc_html_e( 'log entries (oldest are deleted automatically).', 'easycommerce-email-tester' ); ?>
+						</div>
 					</div>
-				</div>
 
-				<div class="ect-field-divider"></div>
+					<!-- Retention by age -->
+					<div class="ect-field">
+						<label class="ect-toggle-label">
+							<input
+								type="checkbox"
+								name="logger_retention_days_enabled"
+								value="1"
+								id="ect-logger-retention-days-enabled"
+								<?php checked( $settings['logger_retention_days_enabled'] ); ?>
+							/>
+							<span class="ect-toggle-text">
+								<?php esc_html_e( 'Limit by age', 'easycommerce-email-tester' ); ?>
+							</span>
+						</label>
+						<div class="ect-retention-row">
+							<label for="ect-logger-retention-days" class="screen-reader-text">
+								<?php esc_html_e( 'Days to keep logs', 'easycommerce-email-tester' ); ?>
+							</label>
+							<?php esc_html_e( 'Delete logs older than', 'easycommerce-email-tester' ); ?>
+							<input
+								type="number"
+								id="ect-logger-retention-days"
+								name="logger_retention_days"
+								value="<?php echo esc_attr( (string) $settings['logger_retention_days'] ); ?>"
+								min="1"
+								step="1"
+								class="small-text"
+							/>
+							<?php esc_html_e( 'days.', 'easycommerce-email-tester' ); ?>
+						</div>
+					</div>
 
-				<!-- Delete on uninstall -->
-				<div class="ect-field">
-					<label class="ect-toggle-label">
-						<input
-							type="checkbox"
-							name="logger_delete_on_uninstall"
-							value="1"
-							id="ect-logger-delete-uninstall"
-							<?php checked( $settings['logger_delete_on_uninstall'] ); ?>
-						/>
-						<span class="ect-toggle-text">
-							<?php esc_html_e( 'Delete all logs when the plugin is uninstalled', 'easycommerce-email-tester' ); ?>
-						</span>
-					</label>
-					<p class="ect-hint">
-						<?php esc_html_e( 'When enabled, the email log table is dropped on plugin removal. Leave unchecked to preserve logs across reinstalls.', 'easycommerce-email-tester' ); ?>
-					</p>
-				</div>
+					<div class="ect-field-divider"></div>
 
-				<div class="ect-actions">
-					<button type="submit" class="button button-primary ect-submit-btn">
-						<span class="dashicons dashicons-saved"></span>
-						<?php esc_html_e( 'Save Settings', 'easycommerce-email-tester' ); ?>
-					</button>
-				</div>
+					<!-- Delete on uninstall -->
+					<div class="ect-field">
+						<label class="ect-toggle-label">
+							<input
+								type="checkbox"
+								name="logger_delete_on_uninstall"
+								value="1"
+								id="ect-logger-delete-uninstall"
+								<?php checked( $settings['logger_delete_on_uninstall'] ); ?>
+							/>
+							<span class="ect-toggle-text">
+								<?php esc_html_e( 'Delete all logs when the plugin is uninstalled', 'easycommerce-email-tester' ); ?>
+							</span>
+						</label>
+						<p class="ect-hint">
+							<?php esc_html_e( 'When enabled, the email log table is dropped on plugin removal. Leave unchecked to preserve logs across reinstalls.', 'easycommerce-email-tester' ); ?>
+						</p>
+					</div>
+
+				</div><!-- .ect-logger-dependents -->
 
 			</div><!-- .ect-card (logger) -->
 
 		</div><!-- .ect-settings-layout -->
+
+		<!-- Save button — applies to the entire form, not just the logger section -->
+		<div class="ect-actions">
+			<button type="submit" class="button button-primary ect-submit-btn">
+				<span class="dashicons dashicons-saved"></span>
+				<?php esc_html_e( 'Save Settings', 'easycommerce-email-tester' ); ?>
+			</button>
+		</div>
 
 	</form>
 

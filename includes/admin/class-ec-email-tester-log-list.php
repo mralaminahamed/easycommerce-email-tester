@@ -213,6 +213,13 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function no_items(): void {
+		esc_html_e( 'No email logs found. Enable logging in Settings to start capturing outgoing emails.', 'easycommerce-email-tester' );
+	}
+
+	/**
 	 * Fallback column renderer.
 	 *
 	 * @param object $item

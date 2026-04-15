@@ -266,6 +266,21 @@
 	color: #1d2327;
 }
 
+.ect-page-header__body {
+	flex: 1;
+	min-width: 0;
+}
+
+/* Back link sits above the H1 on the log-view page */
+.ect-page-header__body .ect-back-link {
+	font-size: 12px;
+	margin-bottom: 4px;
+}
+
+.ect-page-header__body h1 {
+	margin: 0;
+}
+
 .ect-page-header__desc {
 	color: #646970;
 	font-size: 13px;
@@ -591,24 +606,6 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.ect-entry-header {
-	background: #f6f7f7;
-	padding: 12px 16px;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	border-bottom: 1px solid #dcdcde;
-	flex-wrap: wrap;
-}
-
-.ect-entry-title {
-	font-size: 13px;
-	font-weight: 600;
-	margin: 0;
-	flex-shrink: 0;
-	color: #1d2327;
-}
-
 /* Meta table */
 .ect-meta-table {
 	width: 100%;
@@ -876,12 +873,11 @@
 #ect-log-list-form .wp-list-table .column-status { width: 80px; }
 #ect-log-list-form .wp-list-table .column-source { width: 70px; }
 
-/* Log list empty state */
-.ect-log-empty {
-	text-align: center;
-	padding: 48px 24px;
-	color: #8c8f94;
-	font-size: 13px;
+/* Disabled/dimmed state — applied by JS when parent checkbox is unchecked */
+.ect-disabled {
+	opacity: 0.45;
+	pointer-events: none;
+	user-select: none;
 }
 
 /* ============================================================
@@ -948,16 +944,9 @@
 	width: 80px;
 }
 
-/* Settings layout — wider to accommodate two cards */
+/* Settings layout — wide enough for both cards */
 .ect-settings-layout {
 	max-width: 680px;
-}
-
-/* ============================================================
-   SETTINGS
-   ============================================================ */
-.ect-settings-layout {
-	max-width: 560px;
 }
 
 /* ============================================================

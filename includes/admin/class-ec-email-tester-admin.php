@@ -98,8 +98,8 @@ class EC_Email_Tester_Admin {
 			$this->page_hooks[] = $hook;
 		}
 
-		// Email Logs sub-page.
-		$log_count   = EC_Email_Tester_Logger::count_logs();
+		// Email Logs sub-page — guard against missing table on first install.
+		$log_count   = EC_Email_Tester_Logger::table_exists() ? EC_Email_Tester_Logger::count_logs() : 0;
 		$logs_label  = $log_count > 0
 			? sprintf( 'Email Logs <span class="awaiting-mod">%d</span>', $log_count )
 			: 'Email Logs';
@@ -352,19 +352,15 @@ class EC_Email_Tester_Admin {
 			exit;
 		}
 
-		// --- Bulk delete (POST from list table form) ---
-		if ( isset( $_POST['action'] ) && 'delete' === $_POST['action'] && ! empty( $_POST['log_ids'] ) ) {
-			check_admin_referer( 'bulk-logs' );
-			$ids = array_map( 'absint', (array) $_POST['log_ids'] );
-			EC_Email_Tester_Logger::delete_logs( $ids );
-			wp_safe_redirect( add_query_arg( [ 'page' => 'easycommerce-email-tester-logs', 'ect_notice' => 'bulk_deleted' ], admin_url( 'admin.php' ) ) );
-			exit;
+		// --- Bulk delete (list table form — method="get", so read from $_REQUEST) ---
+		$bulk_action = sanitize_text_field( $_REQUEST['action'] ?? '' );
+		if ( '' === $bulk_action || '-1' === $bulk_action ) {
+			$bulk_action = sanitize_text_field( $_REQUEST['action2'] ?? '' );
 		}
 
-		// Also handle action2 (bottom bulk action dropdown).
-		if ( isset( $_POST['action2'] ) && 'delete' === $_POST['action2'] && ! empty( $_POST['log_ids'] ) ) {
+		if ( 'delete' === $bulk_action && ! empty( $_REQUEST['log_ids'] ) ) {
 			check_admin_referer( 'bulk-logs' );
-			$ids = array_map( 'absint', (array) $_POST['log_ids'] );
+			$ids = array_map( 'absint', (array) $_REQUEST['log_ids'] );
 			EC_Email_Tester_Logger::delete_logs( $ids );
 			wp_safe_redirect( add_query_arg( [ 'page' => 'easycommerce-email-tester-logs', 'ect_notice' => 'bulk_deleted' ], admin_url( 'admin.php' ) ) );
 			exit;

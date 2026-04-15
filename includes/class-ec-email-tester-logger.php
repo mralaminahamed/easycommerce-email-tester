@@ -230,6 +230,23 @@ class EC_Email_Tester_Logger {
 	}
 
 	/**
+	 * Check whether the log table exists in the database.
+	 *
+	 * Used to guard queries on every admin page load so a missing table
+	 * (e.g. before activation, or after a failed DB migration) does not
+	 * produce WPDB errors site-wide.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	public static function table_exists(): bool {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return (bool) $wpdb->get_var( 'SHOW TABLES LIKE \'' . self::table() . '\'' );
+	}
+
+	/**
 	 * Create (or silently upgrade) the logs table.
 	 * Called on plugin activation via register_activation_hook.
 	 *

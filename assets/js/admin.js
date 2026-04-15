@@ -5,9 +5,9 @@
  *   1. Show/hide the relevant ID field based on the selected email type.
  *   2. Initialize Select2 on searchable dropdowns backed by the plugin REST API.
  *   3. Switch tabs (Email #1, Email #2 …) in the results panel.
- *   4. Toggle the HTML source block for each captured email entry.
- *   5. Toggle the placeholder details block for each captured email entry.
- *   6. Auto-resize preview iframes to fit their content.
+ *   4. Toggle the HTML source / headers / placeholder blocks.
+ *   5. Auto-resize preview iframes to fit their content.
+ *   6. Settings page — disable retention inputs and dim child fields.
  *
  * @since 1.0.0
  */
@@ -101,10 +101,12 @@
 	} );
 
 	// -------------------------------------------------------------------------
-	// 4 & 5. Generic collapsible toggle (source + placeholders)  (was 3 & 4)
+	// 4. Generic collapsible toggle (source blocks, headers, placeholders)
 	//
 	// Buttons carry:  class="ect-toggle-source"  or  class="ect-toggle-placeholders"
 	//                 data-target="<id-of-block-to-toggle>"
+	//                 data-label-show="Show …"   ← i18n-safe label for collapsed state
+	//                 data-label-hide="Hide …"   ← i18n-safe label for expanded state
 	//                 aria-expanded="false"
 	//
 	// Target blocks use the HTML `hidden` attribute for initial state.
@@ -119,20 +121,54 @@
 			return;
 		}
 
-		var isHidden = $block.attr( 'hidden' ) !== undefined;
+		var isHidden   = $block.attr( 'hidden' ) !== undefined;
+		var labelShow  = $btn.data( 'label-show' );
+		var labelHide  = $btn.data( 'label-hide' );
 
 		if ( isHidden ) {
-			// Expand.
 			$block.removeAttr( 'hidden' );
 			$btn.attr( 'aria-expanded', 'true' );
-			$btn.text( $btn.text().trim().replace( /^Show\b/, 'Hide' ) );
+			if ( labelHide ) { $btn.text( labelHide ); }
 		} else {
-			// Collapse.
 			$block.attr( 'hidden', '' );
 			$btn.attr( 'aria-expanded', 'false' );
-			$btn.text( $btn.text().trim().replace( /^Hide\b/, 'Show' ) );
+			if ( labelShow ) { $btn.text( labelShow ); }
 		}
 	} );
+
+	// -------------------------------------------------------------------------
+	// 5. Settings page — disable retention inputs; dim child fields when
+	//    the parent "Enable email logging" checkbox is unchecked.
+	//
+	// .ect-logger-dependents wraps all fields that depend on logger_enabled.
+	// Retention number inputs are hard-disabled (not just dimmed) so users
+	// can't accidentally edit a value that has no effect.
+	// -------------------------------------------------------------------------
+
+	function ectSyncSettings() {
+		if ( ! $( '#ect-logger-enabled' ).length ) {
+			return;
+		}
+
+		var loggerOn = $( '#ect-logger-enabled' ).is( ':checked' );
+		var countOn  = loggerOn && $( '#ect-logger-retention-count-enabled' ).is( ':checked' );
+		var daysOn   = loggerOn && $( '#ect-logger-retention-days-enabled' ).is( ':checked' );
+
+		// Dim the whole child-fields block when logging is off.
+		$( '.ect-logger-dependents' ).toggleClass( 'ect-disabled', ! loggerOn );
+
+		// Disable / enable the retention number inputs.
+		$( '#ect-logger-retention-count' ).prop( 'disabled', ! countOn );
+		$( '#ect-logger-retention-count' ).closest( '.ect-retention-row' ).toggleClass( 'ect-disabled', ! countOn );
+
+		$( '#ect-logger-retention-days' ).prop( 'disabled', ! daysOn );
+		$( '#ect-logger-retention-days' ).closest( '.ect-retention-row' ).toggleClass( 'ect-disabled', ! daysOn );
+	}
+
+	$( '#ect-logger-enabled, #ect-logger-retention-count-enabled, #ect-logger-retention-days-enabled' )
+		.on( 'change', ectSyncSettings );
+
+	ectSyncSettings();
 
 	// -------------------------------------------------------------------------
 	// 6. Auto-resize preview iframes to avoid internal scroll bars

@@ -69,7 +69,9 @@ $has_unresolved = ! empty( $email['unresolved'] );
 	<!-- Source toggle -->
 	<div class="ect-source-wrap">
 		<button type="button" class="button ect-toggle-source" aria-expanded="false"
-			data-target="ect-source-<?php echo esc_attr( (string) $index ); ?>">
+			data-target="ect-source-<?php echo esc_attr( (string) $index ); ?>"
+			data-label-show="<?php esc_attr_e( 'Show HTML source', 'easycommerce-email-tester' ); ?>"
+			data-label-hide="<?php esc_attr_e( 'Hide HTML source', 'easycommerce-email-tester' ); ?>">
 			<?php esc_html_e( 'Show HTML source', 'easycommerce-email-tester' ); ?>
 		</button>
 		<div class="ect-source-block" id="ect-source-<?php echo esc_attr( (string) $index ); ?>" hidden>
@@ -80,15 +82,15 @@ $has_unresolved = ! empty( $email['unresolved'] );
 	<!-- Placeholder details table -->
 	<?php if ( ! empty( $email['placeholders'] ) ) : ?>
 		<div class="ect-placeholders-wrap">
-			<button type="button" class="button ect-toggle-placeholders" aria-expanded="false"
-				data-target="ect-placeholders-<?php echo esc_attr( (string) $index ); ?>">
-				<?php
-				printf(
-					/* translators: %d: number of placeholders */
-					esc_html__( 'Show placeholders (%d)', 'easycommerce-email-tester' ),
-					count( $email['placeholders'] )
-				);
+			<?php
+				$ph_show_label = sprintf( __( 'Show placeholders (%d)', 'easycommerce-email-tester' ), count( $email['placeholders'] ) );
+				$ph_hide_label = sprintf( __( 'Hide placeholders (%d)', 'easycommerce-email-tester' ), count( $email['placeholders'] ) );
 				?>
+			<button type="button" class="button ect-toggle-placeholders" aria-expanded="false"
+				data-target="ect-placeholders-<?php echo esc_attr( (string) $index ); ?>"
+				data-label-show="<?php echo esc_attr( $ph_show_label ); ?>"
+				data-label-hide="<?php echo esc_attr( $ph_hide_label ); ?>">
+				<?php echo esc_html( $ph_show_label ); ?>
 			</button>
 			<div class="ect-placeholders-block" id="ect-placeholders-<?php echo esc_attr( (string) $index ); ?>" hidden>
 				<table class="ect-placeholders-table widefat">

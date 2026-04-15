@@ -28,15 +28,15 @@ $source_label = $is_test ? __( 'Test', 'easycommerce-email-tester' ) : __( 'Live
 	<!-- ---- Page header ---- -->
 	<div class="ect-page-header">
 		<div class="ect-page-header__body">
+			<a href="<?php echo esc_url( $back_url ); ?>" class="ect-back-link">
+				<span class="dashicons dashicons-arrow-left-alt"></span>
+				<?php esc_html_e( 'Email Logs', 'easycommerce-email-tester' ); ?>
+			</a>
 			<h1>
-				<a href="<?php echo esc_url( $back_url ); ?>" class="ect-back-link">
-					<span class="dashicons dashicons-arrow-left-alt"></span>
-					<?php esc_html_e( 'Email Logs', 'easycommerce-email-tester' ); ?>
-				</a>
 				<?php
 				printf(
 					/* translators: %d: log entry ID */
-					esc_html__( '/ Log #%d', 'easycommerce-email-tester' ),
+					esc_html__( 'Log #%d', 'easycommerce-email-tester' ),
 					(int) $log->id
 				);
 				?>
@@ -114,7 +114,9 @@ $source_label = $is_test ? __( 'Test', 'easycommerce-email-tester' ) : __( 'Live
 			<!-- Headers (collapsible) -->
 			<?php if ( ! empty( $log->headers ) ) : ?>
 				<div class="ect-source-wrap" style="margin-top: 0; border-top: none;">
-					<button type="button" class="button ect-toggle-source" aria-expanded="false" data-target="ect-log-headers">
+					<button type="button" class="button ect-toggle-source" aria-expanded="false" data-target="ect-log-headers"
+						data-label-show="<?php esc_attr_e( 'Show Headers', 'easycommerce-email-tester' ); ?>"
+						data-label-hide="<?php esc_attr_e( 'Hide Headers', 'easycommerce-email-tester' ); ?>">
 						<?php esc_html_e( 'Show Headers', 'easycommerce-email-tester' ); ?>
 					</button>
 					<div class="ect-source-block" id="ect-log-headers" hidden>
@@ -139,7 +141,9 @@ $source_label = $is_test ? __( 'Test', 'easycommerce-email-tester' ) : __( 'Live
 			</div>
 
 			<div class="ect-source-wrap">
-				<button type="button" class="button ect-toggle-source" aria-expanded="false" data-target="ect-log-body-source">
+				<button type="button" class="button ect-toggle-source" aria-expanded="false" data-target="ect-log-body-source"
+					data-label-show="<?php esc_attr_e( 'Show HTML source', 'easycommerce-email-tester' ); ?>"
+					data-label-hide="<?php esc_attr_e( 'Hide HTML source', 'easycommerce-email-tester' ); ?>">
 					<?php esc_html_e( 'Show HTML source', 'easycommerce-email-tester' ); ?>
 				</button>
 				<div class="ect-source-block" id="ect-log-body-source" hidden>
