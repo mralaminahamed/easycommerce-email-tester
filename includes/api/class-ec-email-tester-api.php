@@ -26,6 +26,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class EC_Email_Tester_API {
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- REST API search handlers query live data; caching would return stale search results.
+
 	/**
 	 * REST namespace for all plugin routes.
 	 *
@@ -135,7 +137,8 @@ class EC_Email_Tester_API {
 		global $wpdb;
 
 		$search   = (string) $request->get_param( 'search' );
-		$per_page = absint( $request->get_param( 'per_page' ) ) ?: 20;
+		$per_page = absint( $request->get_param( 'per_page' ) );
+		$per_page = $per_page > 0 ? $per_page : 20;
 
 		if ( '' !== $search ) {
 			$like    = '%' . $wpdb->esc_like( $search ) . '%';
@@ -169,7 +172,7 @@ class EC_Email_Tester_API {
 		}
 
 		return new WP_REST_Response(
-			array_map( [ static::class, 'format_order' ], $results ?: [] ),
+			array_map( [ static::class, 'format_order' ], $results ? $results : [] ),
 			200
 		);
 	}
@@ -187,7 +190,8 @@ class EC_Email_Tester_API {
 	 */
 	public function get_users( WP_REST_Request $request ): WP_REST_Response {
 		$search   = (string) $request->get_param( 'search' );
-		$per_page = absint( $request->get_param( 'per_page' ) ) ?: 20;
+		$per_page = absint( $request->get_param( 'per_page' ) );
+		$per_page = $per_page > 0 ? $per_page : 20;
 
 		$args = [
 			'number'  => $per_page,
@@ -223,7 +227,8 @@ class EC_Email_Tester_API {
 		global $wpdb;
 
 		$search   = (string) $request->get_param( 'search' );
-		$per_page = absint( $request->get_param( 'per_page' ) ) ?: 20;
+		$per_page = absint( $request->get_param( 'per_page' ) );
+		$per_page = $per_page > 0 ? $per_page : 20;
 
 		if ( '' !== $search ) {
 			$like    = '%' . $wpdb->esc_like( $search ) . '%';
@@ -257,7 +262,7 @@ class EC_Email_Tester_API {
 		}
 
 		return new WP_REST_Response(
-			array_map( [ static::class, 'format_cart' ], $results ?: [] ),
+			array_map( [ static::class, 'format_cart' ], $results ? $results : [] ),
 			200
 		);
 	}
