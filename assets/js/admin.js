@@ -128,11 +128,25 @@
 		if ( isHidden ) {
 			$block.removeAttr( 'hidden' );
 			$btn.attr( 'aria-expanded', 'true' );
-			if ( labelHide ) { $btn.text( labelHide ); }
+			if ( labelHide ) {
+				var $labelHideSpan = $btn.find( '.ect-toggle-label-text' );
+				if ( $labelHideSpan.length ) {
+					$labelHideSpan.text( labelHide );
+				} else {
+					$btn.text( labelHide );
+				}
+			}
 		} else {
 			$block.attr( 'hidden', '' );
 			$btn.attr( 'aria-expanded', 'false' );
-			if ( labelShow ) { $btn.text( labelShow ); }
+			if ( labelShow ) {
+				var $labelShowSpan = $btn.find( '.ect-toggle-label-text' );
+				if ( $labelShowSpan.length ) {
+					$labelShowSpan.text( labelShow );
+				} else {
+					$btn.text( labelShow );
+				}
+			}
 		}
 	} );
 
