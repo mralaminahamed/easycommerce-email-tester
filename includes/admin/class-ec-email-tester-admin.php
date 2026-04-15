@@ -100,8 +100,8 @@ class EC_Email_Tester_Admin {
 		}
 
 		// Logs sub-page — guard against missing table on first install.
-		$log_count   = EC_Email_Tester_Logger::table_exists() ? EC_Email_Tester_Logger::count_logs() : 0;
-		$logs_label  = $log_count > 0
+		$log_count  = EC_Email_Tester_Logger::table_exists() ? EC_Email_Tester_Logger::count_logs() : 0;
+		$logs_label = $log_count > 0
 			? sprintf( 'Logs <span class="awaiting-mod">%d</span>', $log_count )
 			: 'Logs';
 
@@ -270,7 +270,7 @@ class EC_Email_Tester_Admin {
 
 		$class_list = array_filter(
 			explode( ' ', $classes ),
-			fn( string $class ) => ! in_array( $class, [ 'easycommerce', 'folded' ], true )
+			fn( string $body_class ) => ! in_array( $body_class, [ 'easycommerce', 'folded' ], true )
 		);
 
 		$class_list[] = 'ect-page';
@@ -314,15 +314,20 @@ class EC_Email_Tester_Admin {
 
 		// When the form has not been submitted yet, pre-populate fields from
 		// the saved settings defaults.
-		$form_submitted  = isset( $_POST['ec_email_tester_nonce'] );
-		$order_id_value  = absint( $_POST['order_id'] ?? 0 );
-		$user_id_value   = absint( $_POST['user_id'] ?? 0 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
+		$form_submitted = isset( $_POST['ec_email_tester_nonce'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
+		$order_id_value = absint( $_POST['order_id'] ?? 0 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
+		$user_id_value = absint( $_POST['user_id'] ?? 0 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
 		$cart_hash_value = sanitize_text_field( wp_unslash( $_POST['cart_hash'] ?? '' ) );
 
 		$this->load_template(
 			'admin/testing.php',
 			[
 				'email_types'      => EC_Email_Tester_Sender::$email_types,
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
 				'selected_type'    => $result['email_type'] ?? sanitize_text_field( wp_unslash( $_POST['email_type'] ?? $settings['default_email_type'] ) ),
 				'order_id_value'   => $order_id_value,
 				'order_id_option'  => $order_id_value > 0 ? EC_Email_Tester_API::get_order_option( $order_id_value ) : null,
@@ -331,9 +336,11 @@ class EC_Email_Tester_Admin {
 				'cart_hash_value'  => $cart_hash_value,
 				'cart_hash_option' => '' !== $cart_hash_value ? EC_Email_Tester_API::get_cart_option( $cart_hash_value ) : null,
 				'override_value'   => $form_submitted
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
 					? sanitize_email( wp_unslash( $_POST['override_email'] ?? '' ) )
 					: $settings['default_override_email'],
 				'dry_run_checked'  => $form_submitted
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
 					? ! empty( $_POST['dry_run'] )
 					: $settings['default_dry_run'],
 				'result'           => $result,
@@ -374,11 +381,13 @@ class EC_Email_Tester_Admin {
 		$notice_type = 'success';
 
 		// --- Single-row action (view / delete via GET) ---
-		$log_action = sanitize_text_field( $_GET['log_action'] ?? '' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce is verified below via wp_verify_nonce()
+		$log_action = sanitize_text_field( wp_unslash( $_GET['log_action'] ?? '' ) );
 		$log_id     = absint( $_GET['log_id'] ?? 0 );
 
 		if ( 'view' === $log_action && $log_id > 0 ) {
-			if ( ! wp_verify_nonce( sanitize_text_field( $_GET['_wpnonce'] ?? '' ), 'ec_email_tester_log_view_' . $log_id ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- sanitize_text_field handles slashing
+			if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), 'ec_email_tester_log_view_' . $log_id ) ) {
 				wp_die( esc_html__( 'Security check failed.', 'easycommerce-email-tester' ) );
 			}
 
@@ -394,44 +403,71 @@ class EC_Email_Tester_Admin {
 		}
 
 		if ( 'delete' === $log_action && $log_id > 0 ) {
-			if ( ! wp_verify_nonce( sanitize_text_field( $_GET['_wpnonce'] ?? '' ), 'ec_email_tester_log_delete_' . $log_id ) ) {
+			if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), 'ec_email_tester_log_delete_' . $log_id ) ) {
 				wp_die( esc_html__( 'Security check failed.', 'easycommerce-email-tester' ) );
 			}
 
 			EC_Email_Tester_Logger::delete_log( $log_id );
 			$notice = __( 'Log entry deleted.', 'easycommerce-email-tester' );
 
-			wp_safe_redirect( add_query_arg( [ 'page' => 'easycommerce-email-tester-logs', 'ect_notice' => 'deleted' ], admin_url( 'admin.php' ) ) );
+			wp_safe_redirect(
+				add_query_arg(
+					[
+						'page'       => 'easycommerce-email-tester-logs',
+						'ect_notice' => 'deleted',
+					],
+					admin_url( 'admin.php' )
+				)
+			);
 			exit;
 		}
 
 		// --- Clear-all form (POST) ---
 		if ( isset( $_POST['ec_log_action'] ) && 'clear_all' === $_POST['ec_log_action'] ) {
-			if ( ! wp_verify_nonce( sanitize_text_field( $_POST['ec_clear_logs_nonce'] ?? '' ), 'ec_email_tester_clear_logs' ) ) {
+			if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ec_clear_logs_nonce'] ?? '' ) ), 'ec_email_tester_clear_logs' ) ) {
 				wp_die( esc_html__( 'Security check failed.', 'easycommerce-email-tester' ) );
 			}
 
 			EC_Email_Tester_Logger::truncate();
-			wp_safe_redirect( add_query_arg( [ 'page' => 'easycommerce-email-tester-logs', 'ect_notice' => 'cleared' ], admin_url( 'admin.php' ) ) );
+			wp_safe_redirect(
+				add_query_arg(
+					[
+						'page'       => 'easycommerce-email-tester-logs',
+						'ect_notice' => 'cleared',
+					],
+					admin_url( 'admin.php' )
+				)
+			);
 			exit;
 		}
 
 		// --- Bulk delete (list table form — method="get", so read from $_REQUEST) ---
-		$bulk_action = sanitize_text_field( $_REQUEST['action'] ?? '' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce checked below via check_admin_referer()
+		$bulk_action = sanitize_text_field( wp_unslash( $_REQUEST['action'] ?? '' ) );
 		if ( '' === $bulk_action || '-1' === $bulk_action ) {
-			$bulk_action = sanitize_text_field( $_REQUEST['action2'] ?? '' );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce checked below via check_admin_referer()
+			$bulk_action = sanitize_text_field( wp_unslash( $_REQUEST['action2'] ?? '' ) );
 		}
 
 		if ( 'delete' === $bulk_action && ! empty( $_REQUEST['log_ids'] ) ) {
 			check_admin_referer( 'bulk-logs' );
 			$ids = array_map( 'absint', (array) $_REQUEST['log_ids'] );
 			EC_Email_Tester_Logger::delete_logs( $ids );
-			wp_safe_redirect( add_query_arg( [ 'page' => 'easycommerce-email-tester-logs', 'ect_notice' => 'bulk_deleted' ], admin_url( 'admin.php' ) ) );
+			wp_safe_redirect(
+				add_query_arg(
+					[
+						'page'       => 'easycommerce-email-tester-logs',
+						'ect_notice' => 'bulk_deleted',
+					],
+					admin_url( 'admin.php' )
+				)
+			);
 			exit;
 		}
 
 		// --- Redirect notice (after GET redirect) ---
-		$redirect_notice = sanitize_text_field( $_GET['ect_notice'] ?? '' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display of redirect notice, no state change
+		$redirect_notice = sanitize_text_field( wp_unslash( $_GET['ect_notice'] ?? '' ) );
 		$notice_map      = [
 			'deleted'      => __( 'Log entry deleted.', 'easycommerce-email-tester' ),
 			'cleared'      => __( 'All log entries cleared.', 'easycommerce-email-tester' ),
@@ -476,7 +512,9 @@ class EC_Email_Tester_Admin {
 	 */
 	private function handle_send_submission(): array {
 		$sender = new EC_Email_Tester_Sender(
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_send_form_submitted()
 			sanitize_email( wp_unslash( $_POST['override_email'] ?? '' ) ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_send_form_submitted()
 			! empty( $_POST['dry_run'] )
 		);
 
@@ -484,9 +522,13 @@ class EC_Email_Tester_Admin {
 		do_action( 'ec_email_tester_before_test_send' );
 
 		$result = $sender->send(
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_send_form_submitted()
 			sanitize_text_field( wp_unslash( $_POST['email_type'] ?? '' ) ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_send_form_submitted()
 			absint( $_POST['order_id'] ?? 0 ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_send_form_submitted()
 			absint( $_POST['user_id'] ?? 0 ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_send_form_submitted()
 			sanitize_text_field( wp_unslash( $_POST['cart_hash'] ?? '' ) )
 		);
 
@@ -521,6 +563,7 @@ class EC_Email_Tester_Admin {
 	 * @since 1.0.0
 	 */
 	private function handle_settings_submission(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 		$submitted_type   = sanitize_text_field( wp_unslash( $_POST['default_email_type'] ?? '' ) );
 		$valid_email_type = array_key_exists( $submitted_type, EC_Email_Tester_Sender::$email_types )
 			? $submitted_type
@@ -530,16 +573,25 @@ class EC_Email_Tester_Admin {
 			self::SETTINGS_OPTION,
 			[
 				// Testing defaults.
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'default_override_email'         => sanitize_email( wp_unslash( $_POST['default_override_email'] ?? '' ) ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'default_dry_run'                => ! empty( $_POST['default_dry_run'] ),
 				'default_email_type'             => $valid_email_type,
 				// Logger settings.
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_enabled'                 => ! empty( $_POST['logger_enabled'] ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_log_test_emails'         => ! empty( $_POST['logger_log_test_emails'] ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_retention_count_enabled' => ! empty( $_POST['logger_retention_count_enabled'] ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_retention_count'         => max( 1, absint( $_POST['logger_retention_count'] ?? 500 ) ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_retention_days_enabled'  => ! empty( $_POST['logger_retention_days_enabled'] ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_retention_days'          => max( 1, absint( $_POST['logger_retention_days'] ?? 30 ) ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in is_settings_form_submitted()
 				'logger_delete_on_uninstall'     => ! empty( $_POST['logger_delete_on_uninstall'] ),
 			]
 		);

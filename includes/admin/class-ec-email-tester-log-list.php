@@ -31,16 +31,21 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		parent::__construct( [
-			'singular' => 'log',
-			'plural'   => 'logs',
-			'ajax'     => false,
-		] );
+		parent::__construct(
+			[
+				'singular' => 'log',
+				'plural'   => 'logs',
+				'ajax'     => false,
+			]
+		);
 
 		$this->filters = [
-			'status' => sanitize_text_field( $_GET['log_status'] ?? '' ),
-			'source' => sanitize_text_field( $_GET['log_source'] ?? '' ),
-			'search' => sanitize_text_field( $_GET['s'] ?? '' ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only list table filter params, no state change
+			'status' => sanitize_text_field( wp_unslash( $_GET['log_status'] ?? '' ) ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only list table filter params, no state change
+			'source' => sanitize_text_field( wp_unslash( $_GET['log_source'] ?? '' ) ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only list table filter params, no state change
+			'search' => sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) ),
 		];
 	}
 
@@ -49,6 +54,8 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Define the columns for the list table.
+	 *
 	 * @inheritDoc
 	 */
 	public function get_columns(): array {
@@ -64,6 +71,8 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	}
 
 	/**
+	 * Define sortable columns for the list table.
+	 *
 	 * @inheritDoc
 	 */
 	protected function get_sortable_columns(): array {
@@ -76,6 +85,8 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	}
 
 	/**
+	 * Define bulk actions available for the list table.
+	 *
 	 * @inheritDoc
 	 */
 	protected function get_bulk_actions(): array {
@@ -187,7 +198,7 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	 * @return string
 	 */
 	protected function column_status( $item ): string {
-		if ( (int) $item->status === 1 ) {
+		if ( 1 === (int) $item->status ) {
 			return '<span class="ect-badge ect-badge--sent">' . esc_html__( 'Sent', 'easycommerce-email-tester' ) . '</span>';
 		}
 
@@ -213,6 +224,8 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	}
 
 	/**
+	 * Display text when no items are found in the list table.
+	 *
 	 * @inheritDoc
 	 */
 	public function no_items(): void {
@@ -222,8 +235,8 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	/**
 	 * Fallback column renderer.
 	 *
-	 * @param object $item
-	 * @param string $column_name
+	 * @param object $item        Log row.
+	 * @param string $column_name Column key.
 	 * @return string
 	 */
 	protected function column_default( $item, $column_name ): string {
@@ -235,28 +248,30 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Get the list of views available on this list table (filter links).
+	 *
 	 * @inheritDoc
 	 */
 	protected function get_views(): array {
 		$base = remove_query_arg( [ 'log_status', 'log_source', 'paged' ] );
 
-		$total   = EC_Email_Tester_Logger::count_logs();
-		$sent    = EC_Email_Tester_Logger::count_logs( [ 'status' => '1' ] );
-		$failed  = EC_Email_Tester_Logger::count_logs( [ 'status' => '0' ] );
-		$live    = EC_Email_Tester_Logger::count_logs( [ 'source' => 'live' ] );
-		$test    = EC_Email_Tester_Logger::count_logs( [ 'source' => 'test' ] );
+		$total  = EC_Email_Tester_Logger::count_logs();
+		$sent   = EC_Email_Tester_Logger::count_logs( [ 'status' => '1' ] );
+		$failed = EC_Email_Tester_Logger::count_logs( [ 'status' => '0' ] );
+		$live   = EC_Email_Tester_Logger::count_logs( [ 'source' => 'live' ] );
+		$test   = EC_Email_Tester_Logger::count_logs( [ 'source' => 'test' ] );
 
 		$current_status = $this->filters['status'];
 		$current_source = $this->filters['source'];
 
 		$views = [
-			'all' => $this->view_link(
+			'all'    => $this->view_link(
 				$base,
 				__( 'All', 'easycommerce-email-tester' ),
 				$total,
 				( '' === $current_status && '' === $current_source )
 			),
-			'sent' => $this->view_link(
+			'sent'   => $this->view_link(
 				add_query_arg( 'log_status', '1', $base ),
 				__( 'Sent', 'easycommerce-email-tester' ),
 				$sent,
@@ -268,13 +283,13 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 				$failed,
 				'0' === $current_status
 			),
-			'live' => $this->view_link(
+			'live'   => $this->view_link(
 				add_query_arg( 'log_source', 'live', $base ),
 				__( 'Live', 'easycommerce-email-tester' ),
 				$live,
 				'live' === $current_source
 			),
-			'test' => $this->view_link(
+			'test'   => $this->view_link(
 				add_query_arg( 'log_source', 'test', $base ),
 				__( 'Test', 'easycommerce-email-tester' ),
 				$test,
@@ -290,30 +305,39 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Prepare items for display in the list table.
+	 *
 	 * @inheritDoc
 	 */
 	public function prepare_items(): void {
 		$per_page = $this->get_items_per_page( 'ec_email_tester_logs_per_page', 25 );
 		$page     = $this->get_pagenum();
-		$orderby  = sanitize_text_field( $_GET['orderby'] ?? 'id' );
-		$order    = sanitize_text_field( $_GET['order'] ?? 'desc' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only list table filter params, no state change
+		$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ?? 'id' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only list table filter params, no state change
+		$order = sanitize_text_field( wp_unslash( $_GET['order'] ?? 'desc' ) );
 
-		$query_args = array_merge( $this->filters, [
-			'page'     => $page,
-			'per_page' => $per_page,
-			'orderby'  => $orderby,
-			'order'    => $order,
-		] );
+		$query_args = array_merge(
+			$this->filters,
+			[
+				'page'     => $page,
+				'per_page' => $per_page,
+				'orderby'  => $orderby,
+				'order'    => $order,
+			]
+		);
 
 		$this->items = EC_Email_Tester_Logger::get_logs( $query_args );
 
 		$total = EC_Email_Tester_Logger::count_logs( $this->filters );
 
-		$this->set_pagination_args( [
-			'total_items' => $total,
-			'per_page'    => $per_page,
-			'total_pages' => (int) ceil( $total / $per_page ),
-		] );
+		$this->set_pagination_args(
+			[
+				'total_items' => $total,
+				'per_page'    => $per_page,
+				'total_pages' => (int) ceil( $total / $per_page ),
+			]
+		);
 
 		$this->_column_headers = [
 			$this->get_columns(),
@@ -329,10 +353,10 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	/**
 	 * Build a view-filter link with count badge.
 	 *
-	 * @param string $url
-	 * @param string $label
-	 * @param int    $count
-	 * @param bool   $current
+	 * @param string $url     The URL for the filter link.
+	 * @param string $label   The human-readable label for the filter.
+	 * @param int    $count   Number of items matching this filter.
+	 * @param bool   $current Whether this filter is currently active.
 	 * @return string
 	 */
 	private function view_link( string $url, string $label, int $count, bool $current ): string {
@@ -350,8 +374,8 @@ class EC_Email_Tester_Log_List extends WP_List_Table {
 	/**
 	 * Build a single-row action URL with nonce.
 	 *
-	 * @param string $action 'view' | 'delete'
-	 * @param int    $id
+	 * @param string $action Row action: 'view' or 'delete'.
+	 * @param int    $id     Log entry ID.
 	 * @return string
 	 */
 	private function row_action_url( string $action, int $id ): string {
