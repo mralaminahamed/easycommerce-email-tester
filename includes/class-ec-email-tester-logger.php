@@ -17,6 +17,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class EC_Email_Tester_Logger {
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Logger manages its own custom table; log data must always be fresh and is never cached.
+
 	/**
 	 * Database table name WITHOUT the wpdb prefix.
 	 *
@@ -82,11 +84,11 @@ class EC_Email_Tester_Logger {
 
 		// Write to the DB only after the send attempt completes (WP 5.9+).
 		add_action( 'wp_mail_succeeded', [ $this, 'capture_success' ] );
-		add_action( 'wp_mail_failed',    [ $this, 'capture_failure' ] );
+		add_action( 'wp_mail_failed', [ $this, 'capture_failure' ] );
 
 		// Allow the Testing page to tag its sends as source='test'.
 		add_action( 'ec_email_tester_before_test_send', [ $this, 'mark_as_test' ] );
-		add_action( 'ec_email_tester_after_test_send',  [ $this, 'unmark_as_test' ] );
+		add_action( 'ec_email_tester_after_test_send', [ $this, 'unmark_as_test' ] );
 	}
 
 	// -------------------------------------------------------------------------
@@ -94,7 +96,7 @@ class EC_Email_Tester_Logger {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * wp_mail filter callback — capture args for later, return unchanged.
+	 * Wp_mail filter callback — capture args for later, return unchanged.
 	 *
 	 * This callback is intentionally side-effect-free: it stores the args in
 	 * $this->pending_log and immediately returns them.  No DB writes happen here
@@ -106,7 +108,7 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $args wp_mail() arguments.
+	 * @param array $args Wp_mail() arguments.
 	 * @return array Unchanged.
 	 */
 	public function capture_mail( array $args ): array {
@@ -125,7 +127,7 @@ class EC_Email_Tester_Logger {
 	}
 
 	/**
-	 * wp_mail_succeeded action — insert a "sent" log row.
+	 * Wp_mail_succeeded action — insert a "sent" log row.
 	 *
 	 * Fires after PHPMailer successfully dispatches the message (WP 5.9+).
 	 * Using the pending args captured in capture_mail so we have the full
@@ -133,9 +135,9 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $mail_data Mail data array passed by core (to/subject/message/headers/attachments).
+	 * @param array $_mail_data Mail data array passed by core (to/subject/message/headers/attachments).
 	 */
-	public function capture_success( array $mail_data ): void {
+	public function capture_success( array $_mail_data ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- hook callback; parameter required by wp_mail_succeeded signature.
 		if ( null === $this->pending_log ) {
 			return;
 		}
@@ -145,14 +147,14 @@ class EC_Email_Tester_Logger {
 	}
 
 	/**
-	 * wp_mail_failed action — insert a "failed" log row.
+	 * Wp_mail_failed action — insert a "failed" log row.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param \WP_Error $error PHPMailer error.
 	 */
 	public function capture_failure( \WP_Error $error ): void {
-		$args = $this->pending_log;
+		$args              = $this->pending_log;
 		$this->pending_log = null;
 
 		if ( null === $args ) {
@@ -324,15 +326,17 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array{
-	 *     page?:     int,
-	 *     per_page?: int,
-	 *     status?:   string,
-	 *     source?:   string,
-	 *     search?:   string,
-	 *     orderby?:  string,
-	 *     order?:    string,
-	 * } $args
+	 * @param array $args {
+	 *     Optional query arguments.
+	 *
+	 *     @type int    $page     Page number (default 1).
+	 *     @type int    $per_page Rows per page (default 25).
+	 *     @type string $status   Filter by status ('0' or '1').
+	 *     @type string $source   Filter by source ('live' or 'test').
+	 *     @type string $search   Search term for to_email or subject.
+	 *     @type string $orderby  Column to sort by.
+	 *     @type string $order    Sort direction ('ASC' or 'DESC').
+	 * }
 	 * @return array<int, object>
 	 */
 	public static function get_logs( array $args = [] ): array {
@@ -351,14 +355,14 @@ class EC_Email_Tester_Logger {
 		$params[] = $per_page;
 		$params[] = $offset;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- self::table() is a fixed, internal value.
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM " . self::table() . " {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d",
+				'SELECT * FROM ' . self::table() . " {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d",
 				...$params
 			)
 		);
-		// phpcs:enable
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 	}
 
 	/**
@@ -374,18 +378,18 @@ class EC_Email_Tester_Logger {
 
 		[ $where_sql, $params ] = self::build_where( $args );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- self::table() is a fixed, internal value.
 		if ( $params ) {
 			$count = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM " . self::table() . " {$where_sql}",
+					'SELECT COUNT(*) FROM ' . self::table() . " {$where_sql}",
 					...$params
 				)
 			);
 		} else {
-			$count = $wpdb->get_var( "SELECT COUNT(*) FROM " . self::table() );
+			$count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::table() ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- self::table() is a fixed, internal value.
 		}
-		// phpcs:enable
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 		return (int) $count;
 	}
@@ -395,14 +399,16 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $id
+	 * @param int $id Log entry ID.
 	 * @return object|null
 	 */
 	public static function get_log( int $id ): ?object {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id = %d', $id ) ) ?: null;
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- self::table() is a fixed, internal value.
+		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id = %d', $id ) );
+
+		return $row ? $row : null;
 	}
 
 	/**
@@ -410,7 +416,7 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $id
+	 * @param int $id Log entry ID.
 	 * @return bool
 	 */
 	public static function delete_log( int $id ): bool {
@@ -423,7 +429,7 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int[] $ids
+	 * @param int[] $ids Array of log entry IDs to delete.
 	 */
 	public static function delete_logs( array $ids ): void {
 		if ( empty( $ids ) ) {
@@ -434,8 +440,8 @@ class EC_Email_Tester_Logger {
 		$ids          = array_map( 'intval', $ids );
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-		$wpdb->query( $wpdb->prepare( "DELETE FROM " . self::table() . " WHERE id IN ({$placeholders})", ...$ids ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- self::table() is a fixed, internal value.
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::table() . " WHERE id IN ({$placeholders})", ...$ids ) );
 	}
 
 	/**
@@ -445,7 +451,7 @@ class EC_Email_Tester_Logger {
 	 */
 	public static function truncate(): void {
 		global $wpdb;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- self::table() is a fixed, internal value.
 		$wpdb->query( 'TRUNCATE TABLE ' . self::table() );
 	}
 
@@ -467,32 +473,32 @@ class EC_Email_Tester_Logger {
 		// Retain only the newest N logs.
 		if ( $settings['logger_retention_count_enabled'] ) {
 			$keep = max( 1, (int) $settings['logger_retention_count'] );
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- self::table() is a fixed, internal value.
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM " . self::table() . "
+					'DELETE FROM ' . self::table() . '
 					WHERE id NOT IN (
 						SELECT id FROM (
-							SELECT id FROM " . self::table() . " ORDER BY id DESC LIMIT %d
+							SELECT id FROM ' . self::table() . ' ORDER BY id DESC LIMIT %d
 						) AS t
-					)",
+					)',
 					$keep
 				)
 			);
-			// phpcs:enable
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
 		}
 
 		// Delete rows older than N days.
 		if ( $settings['logger_retention_days_enabled'] ) {
 			$days = max( 1, (int) $settings['logger_retention_days'] );
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- self::table() is a fixed, internal value.
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM " . self::table() . " WHERE timestamp < DATE_SUB( UTC_TIMESTAMP(), INTERVAL %d DAY )",
+					'DELETE FROM ' . self::table() . ' WHERE timestamp < DATE_SUB( UTC_TIMESTAMP(), INTERVAL %d DAY )',
 					$days
 				)
 			);
-			// phpcs:enable
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
 		}
 	}
 
@@ -536,15 +542,18 @@ class EC_Email_Tester_Logger {
 		$saved = get_option( self::SETTINGS_OPTION, [] );
 		$saved = is_array( $saved ) ? $saved : [];
 
-		$cache = wp_parse_args( $saved, [
-			'logger_enabled'                 => true,
-			'logger_log_test_emails'         => true,
-			'logger_retention_count_enabled' => true,
-			'logger_retention_count'         => 500,
-			'logger_retention_days_enabled'  => false,
-			'logger_retention_days'          => 30,
-			'logger_delete_on_uninstall'     => false,
-		] );
+		$cache = wp_parse_args(
+			$saved,
+			[
+				'logger_enabled'                 => true,
+				'logger_log_test_emails'         => true,
+				'logger_retention_count_enabled' => true,
+				'logger_retention_count'         => 500,
+				'logger_retention_days_enabled'  => false,
+				'logger_retention_days'          => 30,
+				'logger_delete_on_uninstall'     => false,
+			]
+		);
 
 		return $cache;
 	}
@@ -554,8 +563,8 @@ class EC_Email_Tester_Logger {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $args
-	 * @return array{ 0: string, 1: array }  [ where_sql, params ]
+	 * @param array $args Filter arguments (status, source, search).
+	 * @return array{ 0: string, 1: array } Array of [ where_sql, params ].
 	 */
 	private static function build_where( array $args ): array {
 		global $wpdb;
