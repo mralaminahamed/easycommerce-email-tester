@@ -112,7 +112,7 @@ class EC_Email_Tester_Sender {
 	public function send(
 		string $email_type,
 		int $order_id = 0,
-		int $user_id  = 0,
+		int $user_id = 0,
 		string $cart_hash = ''
 	): array {
 		$error = $this->validate( $email_type, $order_id, $user_id, $cart_hash );
@@ -142,6 +142,10 @@ class EC_Email_Tester_Sender {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $email_type One of the keys in self::$email_types.
+	 * @param int    $order_id   Required for order_* types.
+	 * @param int    $user_id    Required for new_account type.
+	 * @param string $cart_hash  Required for abandoned_cart type.
 	 * @return string|null Error message, or null if valid.
 	 */
 	private function validate( string $email_type, int $order_id, int $user_id, string $cart_hash ): ?string {
@@ -268,13 +272,13 @@ class EC_Email_Tester_Sender {
 		$unresolved       = $this->find_unresolved( $resolved_body . ' ' . $resolved_subject );
 
 		$this->captured[] = [
-			'recipient'        => $recipient,
-			'subject_raw'      => $subject,
-			'subject'          => $resolved_subject,
-			'body_raw'         => $body,
-			'body_resolved'    => $resolved_body,
-			'placeholders'     => $placeholders,
-			'unresolved'       => $unresolved,
+			'recipient'     => $recipient,
+			'subject_raw'   => $subject,
+			'subject'       => $resolved_subject,
+			'body_raw'      => $body,
+			'body_resolved' => $resolved_body,
+			'placeholders'  => $placeholders,
+			'unresolved'    => $unresolved,
 		];
 	}
 
@@ -287,6 +291,10 @@ class EC_Email_Tester_Sender {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $email_type One of the keys in self::$email_types.
+	 * @param int    $order_id   Required for order_* types.
+	 * @param int    $user_id    Required for new_account type.
+	 * @param string $cart_hash  Required for abandoned_cart type.
 	 * @return string|null Error message if the trigger itself fails, or null on success.
 	 */
 	private function fire_trigger(
@@ -304,6 +312,7 @@ class EC_Email_Tester_Sender {
 		}
 
 		if ( 'abandoned_cart' === $email_type ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- intentionally invoking EasyCommerce core hook.
 			do_action( 'easycommerce_send_abandoned_reminder', $cart_hash );
 			return null;
 		}
@@ -316,8 +325,8 @@ class EC_Email_Tester_Sender {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $email_type  e.g. 'order_pending'
-	 * @param int    $order_id
+	 * @param string $email_type e.g. 'order_pending'.
+	 * @param int    $order_id   WooCommerce/EasyCommerce order ID.
 	 * @return string|null
 	 */
 	private function trigger_order_email( string $email_type, int $order_id ): ?string {
@@ -334,6 +343,7 @@ class EC_Email_Tester_Sender {
 			);
 		}
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- intentionally invoking EasyCommerce core hook.
 		do_action( 'easycommerce_order_email', $event, $order_id );
 
 		return null;
@@ -361,6 +371,7 @@ class EC_Email_Tester_Sender {
 		$customer = new \EasyCommerce\Models\Customer( $user_id );
 
 		// Mirrors the dispatch in EasyCommerce\Abstracts\User::create().
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- intentionally invoking EasyCommerce core hook.
 		do_action( 'easycommerce_user_created', $user_id, $customer );
 
 		return null;
@@ -378,8 +389,8 @@ class EC_Email_Tester_Sender {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $content
-	 * @param array  $custom_placeholders
+	 * @param string $content             The text to perform replacements on.
+	 * @param array  $custom_placeholders Associative array of ##token## => value.
 	 * @return string
 	 */
 	private function apply_all_placeholders( string $content, array $custom_placeholders ): string {
@@ -420,9 +431,9 @@ class EC_Email_Tester_Sender {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string      $email_type
-	 * @param string|null $error
-	 * @param bool        $mail_sent
+	 * @param string      $email_type One of the keys in self::$email_types.
+	 * @param string|null $error      Error message, or null on success.
+	 * @param bool        $mail_sent  Whether wp_mail() reported success.
 	 * @return array
 	 */
 	private function result( string $email_type, ?string $error, bool $mail_sent ): array {
