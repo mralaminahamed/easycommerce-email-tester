@@ -1,0 +1,63 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/wp-admin/admin.php?page=easycommerce-email-tester",
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "6.8"
+  },
+  "phpExtensionBundles": [
+    "kitchen-sink"
+  ],
+  "features": {
+    "networking": true
+  },
+  "steps": [
+    {
+      "step": "login",
+      "username": "admin",
+      "password": "password"
+    },
+    {
+      "step": "installPlugin",
+      "pluginZipFile": {
+        "resource": "wordpress.org/plugins",
+        "slug": "easycommerce"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "installPlugin",
+      "pluginZipFile": {
+        "resource": "wordpress.org/plugins",
+        "slug": "easycommerce-email-tester"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "EasyCommerce Email Tester Demo",
+        "blogdescription": "Test, preview, and debug EasyCommerce email notifications.",
+        "admin_email": "demo@example.com",
+        "permalink_structure": "/%postname%/"
+      }
+    }
+  ],
+  "meta": {
+    "title": "EasyCommerce Email Tester Demo",
+    "description": "Test and preview EasyCommerce email notifications without real triggers or live SMTP.",
+    "author": "Al Amin Ahamed",
+    "categories": [
+      "ecommerce",
+      "email",
+      "testing",
+      "developer-tools",
+      "wordpress-playground"
+    ],
+    "difficulty": "beginner"
+  }
+}

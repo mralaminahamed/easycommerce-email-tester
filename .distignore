@@ -1,0 +1,92 @@
+# Development and build files
+/node_modules/
+composer.json
+composer.lock
+package.json
+package-lock.json
+yarn.lock
+
+# Development tools and configuration
+.actrc
+.editorconfig
+.gitignore
+.distignore
+phpcs.xml
+phpcs.plugin-review.xml
+phpstan.neon
+phpunit.xml
+phpunit.xml.dist
+.eslintcache
+.stylelintcache
+
+# Documentation and project files
+README.md
+SECURITY.md
+CHANGELOG.md
+/docs/
+
+# Testing and CI
+/tests/
+/.github/
+/.travis.yml
+/.circleci/
+/.phpstan-cache/
+/coverage/
+/test-results/
+
+# IDE and editor files
+/.vscode/
+/.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build and release directories
+/release/
+/build/
+/dist/
+
+# Git files
+/.git/
+.gitattributes
+.gitmodules
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+*.swp
+*.swo
+*~
+
+# Archives (development)
+*.zip
+*.tar.gz
+*.rar
+
+# Claude AI files
+/.claude/
+/.playwright-mcp/
+/.remember/
+AGENTS.md
+
+# Cache directories
+/.cache/
+/tmp/
+
+# Language source files (only .pot ships; .po/.mo are downloaded by WP)
+/languages/*.po
+/languages/*.mo

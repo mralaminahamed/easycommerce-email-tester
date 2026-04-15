@@ -1,0 +1,193 @@
+name: Release Plugin to WP.org
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write # Required to create a GitHub release
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  # ---------------------------------------------------------------------------
+  # JOB 1 — meta
+  # Derives plugin identifiers and validates tag/version alignment.
+  # ---------------------------------------------------------------------------
+  meta:
+    name: "Meta: Resolve plugin info & validate version"
+    runs-on: ubuntu-latest
+    outputs:
+      plugin_slug: ${{ steps.plugin_name.outputs.plugin_slug }}
+      plugin_file: ${{ steps.plugin_name.outputs.plugin_file }}
+      plugin_name: ${{ steps.plugin_name.outputs.plugin_name }}
+      version:     ${{ steps.version_check.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive plugin identifiers from repository name
+        id: plugin_name
+        run: |
+          PLUGIN_SLUG="${{ github.event.repository.name }}"
+
+          if [ -z "$PLUGIN_SLUG" ]; then
+            REMOTE_URL=$(git remote get-url origin 2>/dev/null || true)
+            if [ -n "$REMOTE_URL" ]; then
+              PLUGIN_SLUG=$(basename "$REMOTE_URL" .git)
+            fi
+          fi
+
+          if [ -z "$PLUGIN_SLUG" ]; then
+            PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
+          fi
+
+          if [ -z "$PLUGIN_SLUG" ]; then
+            echo "::error::Could not determine plugin slug from any source." >&2
+            exit 1
+          fi
+
+          PLUGIN_FILE="${PLUGIN_SLUG}.php"
+          PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g; s/\b\w/\U&/g')
+
+          echo "plugin_slug=$PLUGIN_SLUG" >> "$GITHUB_OUTPUT"
+          echo "plugin_file=$PLUGIN_FILE"  >> "$GITHUB_OUTPUT"
+          echo "plugin_name=$PLUGIN_NAME"  >> "$GITHUB_OUTPUT"
+
+      - name: Validate tag / plugin-header version alignment
+        id: version_check
+        run: |
+          TAG_REF="${GITHUB_REF#refs/tags/}"
+          TAG_STRIPPED="${TAG_REF#v}"
+          PLUGIN_FILE="${{ steps.plugin_name.outputs.plugin_file }}"
+
+          if [ ! -f "$PLUGIN_FILE" ]; then
+            echo "::error::Plugin main file '$PLUGIN_FILE' not found." >&2
+            exit 1
+          fi
+
+          PLUGIN_VERSION=$(
+            grep -E "^[[:space:]]*\*[[:space:]]*Version:" "$PLUGIN_FILE" \
+              | head -n1 \
+              | sed -E 's/.*Version:[[:space:]]*([^[:space:]]+).*/\1/'
+          )
+
+          if [ -z "$PLUGIN_VERSION" ]; then
+            echo "::error::Could not extract Version from $PLUGIN_FILE" >&2
+            exit 1
+          fi
+
+          if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then
+            echo "::error::Version mismatch — tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)" >&2
+            exit 1
+          fi
+
+          echo "version=$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Verify composer.lock is committed
+        run: |
+          if [ ! -f composer.lock ]; then
+            echo "::error::composer.lock is missing. Commit it before tagging a release." >&2
+            exit 1
+          fi
+
+  # ---------------------------------------------------------------------------
+  # JOB 2 — build
+  # Installs PHP dependencies and uploads the built plugin tree as an artifact.
+  # ---------------------------------------------------------------------------
+  build:
+    name: "Build: Install deps"
+    runs-on: ubuntu-latest
+    needs: meta
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP 8.0
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+            vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Install PHP dependencies (production)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Upload built plugin as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-build-${{ needs.meta.outputs.version }}
+          path: |
+            .
+            !.git
+            !.github
+            !.distignore
+            !composer.json
+            !composer.lock
+            !phpcs.xml
+            !phpcs.plugin-review.xml
+            !phpstan.neon
+          retention-days: 1
+
+  # ---------------------------------------------------------------------------
+  # JOB 3 — deploy
+  # Deploys to WordPress.org SVN and creates the GitHub release.
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: "Deploy: Publish to WP.org & create GitHub release"
+    runs-on: ubuntu-latest
+    needs: [meta, build]
+
+    steps:
+      - name: Download built plugin artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-build-${{ needs.meta.outputs.version }}
+          path: .
+
+      - name: Deploy plugin to WordPress.org via SVN
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG:         ${{ needs.meta.outputs.plugin_slug }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ needs.meta.outputs.version }}"
+          body: |
+            ## ${{ needs.meta.outputs.plugin_name }} — v${{ needs.meta.outputs.version }}
+
+            Refer to [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full details.
+          files: ${{ steps.deploy.outputs.zip-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
