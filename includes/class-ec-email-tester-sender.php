@@ -54,6 +54,15 @@ class EC_Email_Tester_Sender {
 	private array $listeners = [];
 
 	/**
+	 * Whether at least one wp_mail() call succeeded during the current trigger.
+	 * Set to true by the wp_mail_succeeded listener; reset at the start of send().
+	 *
+	 * @since 1.0.0
+	 * @var bool
+	 */
+	private bool $mail_sent = false;
+
+	/**
 	 * Map email type keys to human-readable labels.
 	 *
 	 * @since 1.0.0
@@ -112,11 +121,12 @@ class EC_Email_Tester_Sender {
 			return $this->result( $email_type, $error, false );
 		}
 
+		$this->mail_sent = false;
 		$this->setup_listeners();
 
 		$trigger_error = $this->fire_trigger( $email_type, $order_id, $user_id, $cart_hash );
 
-		$mail_sent = apply_filters( 'easycommerce_mail_sent', false );
+		$mail_sent = $this->mail_sent;
 
 		$this->teardown_listeners();
 
@@ -180,6 +190,14 @@ class EC_Email_Tester_Sender {
 		add_action( 'easycommerce_email', $capture, 5, 4 );
 		$this->listeners['capture'] = $capture;
 
+		// Detect a successful wp_mail() dispatch (WP 5.9+, always available on WP 6.5+).
+		$succeeded = function (): void {
+			$this->mail_sent = true;
+		};
+
+		add_action( 'wp_mail_succeeded', $succeeded );
+		$this->listeners['succeeded'] = $succeeded;
+
 		// Dry-run: short-circuit wp_mail() so nothing actually goes out.
 		if ( $this->dry_run ) {
 			$pre = '__return_true';
@@ -208,6 +226,10 @@ class EC_Email_Tester_Sender {
 	private function teardown_listeners(): void {
 		if ( isset( $this->listeners['capture'] ) ) {
 			remove_action( 'easycommerce_email', $this->listeners['capture'], 5 );
+		}
+
+		if ( isset( $this->listeners['succeeded'] ) ) {
+			remove_action( 'wp_mail_succeeded', $this->listeners['succeeded'] );
 		}
 
 		if ( isset( $this->listeners['pre_wp_mail'] ) ) {
