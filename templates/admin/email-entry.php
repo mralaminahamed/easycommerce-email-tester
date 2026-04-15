@@ -21,6 +21,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 $preview_html   = EC_Email_Tester_Admin::wrap_preview_html( $email['body_resolved'] );
 $has_unresolved = ! empty( $email['unresolved'] );
@@ -83,9 +84,11 @@ $has_unresolved = ! empty( $email['unresolved'] );
 	<?php if ( ! empty( $email['placeholders'] ) ) : ?>
 		<div class="ect-placeholders-wrap">
 			<?php
+				/* translators: %d: number of placeholders */
 				$ph_show_label = sprintf( __( 'Show placeholders (%d)', 'easycommerce-email-tester' ), count( $email['placeholders'] ) );
+				/* translators: %d: number of placeholders */
 				$ph_hide_label = sprintf( __( 'Hide placeholders (%d)', 'easycommerce-email-tester' ), count( $email['placeholders'] ) );
-				?>
+			?>
 			<button type="button" class="button ect-toggle-placeholders" aria-expanded="false"
 				data-target="ect-placeholders-<?php echo esc_attr( (string) $index ); ?>"
 				data-label-show="<?php echo esc_attr( $ph_show_label ); ?>"

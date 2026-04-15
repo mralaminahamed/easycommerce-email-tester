@@ -17,6 +17,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 // Resolve send badge once — shared across all captured emails.
 if ( $result['dry_run'] ) {
@@ -54,9 +55,10 @@ if ( $result['dry_run'] ) {
 
 	<!-- Tab navigation -->
 	<div class="ect-tabs-nav" role="tablist" aria-label="<?php esc_attr_e( 'Captured emails', 'easycommerce-email-tester' ); ?>">
-		<?php foreach ( $result['captured'] as $i => $tab_email ) :
+		<?php
+		foreach ( $result['captured'] as $i => $tab_email ) :
 			$tab_has_unresolved = ! empty( $tab_email['unresolved'] );
-		?>
+			?>
 			<button
 				type="button"
 				role="tab"
@@ -69,7 +71,7 @@ if ( $result['dry_run'] ) {
 				printf(
 					/* translators: %d: email entry number */
 					esc_html__( 'Email #%d', 'easycommerce-email-tester' ),
-					$i + 1
+					(int) $i + 1
 				);
 				?>
 				<span class="ect-badge <?php echo esc_attr( $send_badge_class ); ?>"><?php echo esc_html( $send_label ); ?></span>
@@ -95,7 +97,10 @@ if ( $result['dry_run'] ) {
 			id="ect-tab-<?php echo esc_attr( (string) $index ); ?>"
 			role="tabpanel"
 			aria-labelledby="ect-tab-trigger-<?php echo esc_attr( (string) $index ); ?>"
-			<?php if ( $index > 0 ) : ?>hidden<?php endif; ?>
+			<?php
+			if ( $index > 0 ) :
+				?>
+				hidden<?php endif; ?>
 		>
 			<?php include EC_EMAIL_TESTER_PATH . 'templates/admin/email-entry.php'; ?>
 		</div>

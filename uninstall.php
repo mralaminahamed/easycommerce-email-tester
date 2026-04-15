@@ -10,9 +10,9 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-$settings = get_option( 'ec_email_tester_settings', [] );
+$ec_email_tester_settings = get_option( 'ec_email_tester_settings', [] );
 
-if ( ! empty( $settings['logger_delete_on_uninstall'] ) ) {
+if ( ! empty( $ec_email_tester_settings['logger_delete_on_uninstall'] ) ) {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-ec-email-tester-logger.php';
 	EC_Email_Tester_Logger::drop_table();
 }

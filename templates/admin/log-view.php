@@ -12,13 +12,14 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
-$utc        = new DateTimeImmutable( $log->timestamp, new DateTimeZone( 'UTC' ) );
-$local      = $utc->setTimezone( wp_timezone() );
-$date_fmt   = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
-$is_sent    = (int) $log->status === 1;
-$is_test    = $log->source === 'test';
-$preview    = EC_Email_Tester_Admin::wrap_preview_html( $log->message );
+$utc         = new DateTimeImmutable( $log->timestamp, new DateTimeZone( 'UTC' ) );
+$local       = $utc->setTimezone( wp_timezone() );
+$date_fmt    = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+$is_sent     = 1 === (int) $log->status;
+$is_test     = 'test' === $log->source;
+$ect_preview = EC_Email_Tester_Admin::wrap_preview_html( $log->message );
 
 $source_class = $is_test ? 'ect-badge--source-test' : 'ect-badge--source-live';
 $source_label = $is_test ? __( 'Test', 'easycommerce-email-tester' ) : __( 'Live', 'easycommerce-email-tester' );
@@ -47,7 +48,11 @@ $status_mod   = $is_sent ? 'sent' : 'failed';
 			<?php
 			$delete_url = wp_nonce_url(
 				add_query_arg(
-					[ 'page' => 'easycommerce-email-tester-logs', 'log_action' => 'delete', 'log_id' => $log->id ],
+					[
+						'page'       => 'easycommerce-email-tester-logs',
+						'log_action' => 'delete',
+						'log_id'     => $log->id,
+					],
 					admin_url( 'admin.php' )
 				),
 				'ec_email_tester_log_delete_' . $log->id
@@ -163,7 +168,7 @@ $status_mod   = $is_sent ? 'sent' : 'failed';
 			<div class="ect-log-preview-wrap">
 				<iframe
 					class="ect-preview-iframe"
-					srcdoc="<?php echo esc_attr( $preview ); ?>"
+					srcdoc="<?php echo esc_attr( $ect_preview ); ?>"
 					sandbox="allow-same-origin"
 					loading="lazy"
 					title="<?php esc_attr_e( 'Email preview', 'easycommerce-email-tester' ); ?>"

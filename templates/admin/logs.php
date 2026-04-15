@@ -13,6 +13,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 $has_logs = EC_Email_Tester_Logger::table_exists() && EC_Email_Tester_Logger::count_logs() > 0;
 ?>

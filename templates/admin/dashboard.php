@@ -17,12 +17,13 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="wrap ect-wrap">
 
 	<!-- ============================================================
-	     Hero banner
-	     ============================================================ -->
+		Hero banner
+		============================================================ -->
 	<div class="ect-hero">
 		<div class="ect-hero__icon">
 			<?php EC_Email_Tester_Icons::render( 'send' ); ?>
@@ -41,8 +42,8 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 
 	<!-- ============================================================
-	     Status cards
-	     ============================================================ -->
+		Status cards
+		============================================================ -->
 	<div class="ect-stats">
 
 		<div class="ect-stat-card ect-stat-card--blue">
@@ -62,9 +63,11 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 			</div>
 			<span class="ect-stat-card__value">
-				<?php echo ! empty( $settings['default_override_email'] )
+				<?php
+				echo ! empty( $settings['default_override_email'] )
 					? esc_html( $settings['default_override_email'] )
-					: esc_html__( '—', 'easycommerce-email-tester' ); ?>
+					: esc_html__( '—', 'easycommerce-email-tester' );
+				?>
 			</span>
 			<span class="ect-stat-card__label"><?php esc_html_e( 'Override recipient', 'easycommerce-email-tester' ); ?></span>
 			<?php if ( empty( $settings['default_override_email'] ) ) : ?>
@@ -79,23 +82,27 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 			</div>
 			<span class="ect-stat-card__value">
-				<?php echo $settings['default_dry_run']
+				<?php
+				echo $settings['default_dry_run']
 					? esc_html__( 'Dry run', 'easycommerce-email-tester' )
-					: esc_html__( 'Live send', 'easycommerce-email-tester' ); ?>
+					: esc_html__( 'Live send', 'easycommerce-email-tester' );
+				?>
 			</span>
 			<span class="ect-stat-card__label"><?php esc_html_e( 'Default send mode', 'easycommerce-email-tester' ); ?></span>
 			<span class="ect-stat-card__sub">
-				<?php echo $settings['default_dry_run']
+				<?php
+				echo $settings['default_dry_run']
 					? esc_html__( 'wp_mail() blocked by default', 'easycommerce-email-tester' )
-					: esc_html__( 'Emails actually sent by default', 'easycommerce-email-tester' ); ?>
+					: esc_html__( 'Emails actually sent by default', 'easycommerce-email-tester' );
+				?>
 			</span>
 		</div>
 
 	</div><!-- .ect-stats -->
 
 	<!-- ============================================================
-	     Feature cards
-	     ============================================================ -->
+		Feature cards
+		============================================================ -->
 	<div class="ect-features">
 
 		<div class="ect-feature-card">
