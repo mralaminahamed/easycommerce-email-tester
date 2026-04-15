@@ -1,0 +1,132 @@
+parameters:
+    level: 7
+
+    paths:
+        - easycommerce-email-tester.php
+        - uninstall.php
+        - includes/
+
+    excludePaths:
+        - vendor/
+        - node_modules/
+        - build/
+        - release/
+        - languages/
+
+    # Bootstrap the plugin constants and globals before analysis.
+    bootstrapFiles:
+        - easycommerce-email-tester.php
+
+    # WordPress object crates — dynamic properties are expected on these.
+    universalObjectCratesClasses:
+        - WP_Post
+        - WP_User
+        - WP_Term
+        - WP_Comment
+        - WP_Query
+        - WP_REST_Request
+        - WP_REST_Response
+
+    # WordPress type stubs.
+    stubFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+
+    # Plugin-specific constants treated as dynamic (may or may not be defined
+    # depending on analysis entry point).
+    dynamicConstantNames:
+        - ABSPATH
+        - WP_DEBUG
+        - WP_DEBUG_LOG
+        - WP_DEBUG_DISPLAY
+        - SCRIPT_DEBUG
+        - WP_CACHE
+        - EC_EMAIL_TESTER_VERSION
+        - EC_EMAIL_TESTER_PATH
+        - EC_EMAIL_TESTER_URL
+        - EC_EMAIL_TESTER_FILE
+        - EC_EMAIL_TESTER_MIN_PHP_VERSION
+        - EASYCOMMERCE_VERSION
+
+    ignoreErrors:
+        # WordPress functions not available in the analysis environment.
+        - '#Function wp_[a-zA-Z_]+ not found\.#'
+        - '#Function is_plugin_active not found\.#'
+        - '#Function get_plugin_data not found\.#'
+        - '#Function add_action not found\.#'
+        - '#Function add_filter not found\.#'
+        - '#Function remove_action not found\.#'
+        - '#Function remove_filter not found\.#'
+        - '#Function remove_all_filters not found\.#'
+        - '#Function do_action not found\.#'
+        - '#Function apply_filters not found\.#'
+        - '#Function esc_html not found\.#'
+        - '#Function esc_attr not found\.#'
+        - '#Function esc_url not found\.#'
+        - '#Function esc_textarea not found\.#'
+        - '#Function wp_kses_post not found\.#'
+        - '#Function wpautop not found\.#'
+        - '#Function sanitize_text_field not found\.#'
+        - '#Function sanitize_email not found\.#'
+        - '#Function wp_unslash not found\.#'
+        - '#Function wp_nonce_field not found\.#'
+        - '#Function wp_verify_nonce not found\.#'
+        - '#Function wp_die not found\.#'
+        - '#Function current_user_can not found\.#'
+        - '#Function get_bloginfo not found\.#'
+        - '#Function get_userdata not found\.#'
+        - '#Function get_option not found\.#'
+        - '#Function plugin_basename not found\.#'
+        - '#Function admin_url not found\.#'
+        - '#Function add_submenu_page not found\.#'
+        - '#Function is_email not found\.#'
+        - '#Function date_i18n not found\.#'
+        - '#Function checked not found\.#'
+        - '#Function selected not found\.#'
+        - '#Function load_plugin_textdomain not found\.#'
+        - '#Function register_activation_hook not found\.#'
+        - '#Function register_deactivation_hook not found\.#'
+        - '#Function easycommerce_[a-zA-Z_]+ not found\.#'
+
+        # EasyCommerce plugin classes resolved at runtime, not during analysis.
+        - '#.*EasyCommerce\\Models\\.*#'
+        - '#.*EasyCommerce\\Helpers\\.*#'
+        - '#.*EasyCommerce\\Abstracts\\.*#'
+
+        # WordPress globals.
+        - '#Undefined variable: \$wpdb\.#'
+        - '#Undefined variable: \$wp_version\.#'
+
+        # Dynamic properties on WordPress core objects.
+        - '#Access to an undefined property WP_[a-zA-Z_]+::\$[a-zA-Z_]+\.#'
+        - '#Property WP_[a-zA-Z_]+::\$[a-zA-Z_]+ \(mixed\) does not accept [a-zA-Z0-9\\_|]+\.#'
+
+        # WordPress hook callable shape — WordPress accepts array callables.
+        - '#Parameter \#1 \$function_to_add of function add_action expects callable\(\): mixed, array given\.#'
+        - '#Parameter \#1 \$function_to_add of function add_filter expects callable, array given\.#'
+
+        # Array type annotations — acceptable at this level.
+        - '#Method .* has no value type specified in iterable type array\.#'
+        - '#Method .* return type has no value type specified in iterable type array\.#'
+        - '#Parameter .* has no value type specified in iterable type array\.#'
+        - '#has parameter .* with no value type specified in iterable type array\.#'
+
+        # WordPress-specific false positives.
+        - '#Call to function is_numeric\(\) with int will always evaluate to true\.#'
+        - '#Variable .* in empty\(\) always exists and is not falsy\.#'
+        - '#Call to function is_wp_error\(\) .* will always evaluate to false\.#'
+
+        # PHPDoc inheritance mismatches common in WordPress plugins.
+        - '#PHPDoc tag @return with type .* is not subtype of native type .*\.#'
+
+        - identifier: 'property.notFound'
+
+    # Do not fail on unused ignore patterns (some may only apply in CI).
+    reportUnmatchedIgnoredErrors: false
+
+    # Parallel analysis.
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 4
+
+    # Cache directory.
+    tmpDir: .phpstan-cache

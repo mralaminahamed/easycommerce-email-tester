@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<ruleset name="EasyCommerce Email Tester">
+    <description>PHP CodeSniffer ruleset for EasyCommerce Email Tester plugin.</description>
+
+    <!-- Files to check -->
+    <file>./easycommerce-email-tester.php</file>
+    <file>./uninstall.php</file>
+    <file>./includes</file>
+    <file>./templates</file>
+
+    <!-- Exclude generated / third-party paths -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/build/*</exclude-pattern>
+    <exclude-pattern>*/release/*</exclude-pattern>
+    <exclude-pattern>*/languages/*</exclude-pattern>
+
+    <!-- WordPress Coding Standards -->
+    <rule ref="WordPress">
+        <!-- Short array syntax is preferred throughout the plugin. -->
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+        <!-- Class/file names follow the classmap pattern, not PSR-4. -->
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+    </rule>
+
+    <!-- PHP cross-version compatibility: target PHP 8.0+ -->
+    <rule ref="PHPCompatibility"/>
+    <config name="testVersion" value="8.0-"/>
+
+    <!-- Minimum supported WordPress version -->
+    <config name="minimum_supported_wp_version" value="6.0"/>
+
+    <!-- Display settings -->
+    <arg name="colors"/>
+    <arg value="ps"/>
+
+    <!-- Enforce text domain -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="easycommerce-email-tester"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Enforce plugin-specific global prefix -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="ec_email_tester"/>
+                <element value="EC_EMAIL_TESTER"/>
+                <element value="EC_Email_Tester"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Exclude inline comment punctuation in templates -->
+    <rule ref="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+</ruleset>

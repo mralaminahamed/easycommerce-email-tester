@@ -1,0 +1,23 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build artefacts
+/build/
+/release/
+
+# Composer local platform override
+/composer.lock
+
+# PHPStan cache
+/.phpstan-cache/
+
+# Language artefacts (generated)
+/languages/*.pot
+/languages/*.po
+/languages/*.mo
+
+# Claude Code local settings (machine-specific)
+/.claude/
+/.playwright-mcp/
+/.remember/
