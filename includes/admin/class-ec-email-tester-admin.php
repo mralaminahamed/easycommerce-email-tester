@@ -288,6 +288,7 @@ class EC_Email_Tester_Admin {
 	 * @since 1.0.0
 	 */
 	public function render_dashboard(): void {
+		$this->render_page_nav();
 		$this->load_template(
 			'admin/dashboard.php',
 			[
@@ -323,6 +324,7 @@ class EC_Email_Tester_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via wp_verify_nonce()
 		$cart_hash_value = sanitize_text_field( wp_unslash( $_POST['cart_hash'] ?? '' ) );
 
+		$this->render_page_nav();
 		$this->load_template(
 			'admin/testing.php',
 			[
@@ -361,6 +363,7 @@ class EC_Email_Tester_Admin {
 			$saved = true;
 		}
 
+		$this->render_page_nav();
 		$this->load_template(
 			'admin/settings.php',
 			[
@@ -398,6 +401,7 @@ class EC_Email_Tester_Admin {
 			}
 
 			$back_url = admin_url( 'admin.php?page=easycommerce-email-tester-logs' );
+			$this->render_page_nav();
 			$this->load_template( 'admin/log-view.php', compact( 'log', 'back_url' ) );
 			return;
 		}
@@ -482,6 +486,7 @@ class EC_Email_Tester_Admin {
 		$list_table = new EC_Email_Tester_Log_List();
 		$list_table->prepare_items();
 
+		$this->render_page_nav();
 		$this->load_template( 'admin/logs.php', compact( 'list_table', 'notice', 'notice_type' ) );
 	}
 
@@ -660,6 +665,51 @@ class EC_Email_Tester_Admin {
 		extract( $args, EXTR_SKIP );
 
 		include $path;
+	}
+
+	// -------------------------------------------------------------------------
+	// Page nav
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Render the shared horizontal tab bar shown above every page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_page_nav(): void {
+		$current = sanitize_text_field( wp_unslash( $_GET['page'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		$nav_items = [
+			'easycommerce-email-tester'          => [
+				'label' => __( 'Dashboard', 'easycommerce-email-tester' ),
+				'icon'  => 'mail',
+			],
+			'easycommerce-email-tester-testing'  => [
+				'label' => __( 'Testing', 'easycommerce-email-tester' ),
+				'icon'  => 'send',
+			],
+			'easycommerce-email-tester-logs'     => [
+				'label' => __( 'Logs', 'easycommerce-email-tester' ),
+				'icon'  => 'list',
+			],
+			'easycommerce-email-tester-settings' => [
+				'label' => __( 'Settings', 'easycommerce-email-tester' ),
+				'icon'  => 'settings',
+			],
+		];
+
+		echo '<nav class="ect-page-nav" aria-label="' . esc_attr__( 'Email Tester Navigation', 'easycommerce-email-tester' ) . '">';
+		foreach ( $nav_items as $slug => $item ) {
+			$is_active = ( $current === $slug );
+			printf(
+				'<a href="%s" class="ect-page-nav__item%s">%s<span>%s</span></a>',
+				esc_url( admin_url( 'admin.php?page=' . $slug ) ),
+				$is_active ? ' is-active' : '',
+				EC_Email_Tester_Icons::get( $item['icon'] ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				esc_html( $item['label'] )
+			);
+		}
+		echo '</nav>';
 	}
 
 	// -------------------------------------------------------------------------
