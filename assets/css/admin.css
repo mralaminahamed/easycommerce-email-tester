@@ -1178,6 +1178,111 @@
 }
 
 /* ============================================================
+   WP CORE RESET + BUTTON SYSTEM
+   ============================================================ */
+
+/*
+ * WP admin body inherits a large line-height onto .button children and
+ * .button itself sets min-height:40px — both inflate buttons to ~61px.
+ * Reset here so padding alone controls height.
+ */
+.ect-wrap .button,
+.ect-wrap .button-primary,
+.ect-wrap .button-secondary,
+.ect-wrap .ect-btn-danger {
+	line-height: 1.4 !important;
+	min-height: 0 !important;
+	height: auto !important;
+	cursor: pointer !important;
+	white-space: nowrap !important;
+	text-decoration: none !important;
+}
+
+/* Primary — polished with shadow and consistent sizing */
+.ect-wrap .button-primary {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 7px;
+	padding: 9px 20px !important;
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	border-radius: 4px !important;
+	box-shadow: 0 2px 6px rgba(34,113,177,.25) !important;
+	transition: background 0.15s, box-shadow 0.15s, border-color 0.15s !important;
+	vertical-align: middle;
+}
+
+.ect-wrap .button-primary:hover,
+.ect-wrap .button-primary:focus {
+	box-shadow: 0 4px 12px rgba(34,113,177,.35) !important;
+}
+
+.ect-wrap .button-primary svg {
+	width: 15px;
+	height: 15px;
+	flex-shrink: 0;
+}
+
+/* Danger — explicit padding so it doesn't shrink with line-height reset */
+.ect-wrap .ect-btn-danger {
+	display: inline-flex !important;
+	align-items: center !important;
+	gap: 5px;
+	padding: 7px 14px !important;
+	font-size: 13px !important;
+	border-radius: 4px !important;
+	transition: background 0.15s, color 0.15s, border-color 0.15s !important;
+	vertical-align: middle;
+}
+
+/* Reset WP admin default box-shadow on a:active/focus */
+.ect-wrap a:active,
+.ect-wrap a:focus {
+	box-shadow: none;
+	outline: none;
+}
+
+/* ============================================================
+   HERO  — dot-grid texture + icon glow ring
+   ============================================================ */
+
+/*
+ * ::before and ::after are already used for the decorative circles.
+ * Add the dot-grid pattern via background-image instead.
+ */
+.ect-hero {
+	background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.055) 1px, transparent 0);
+	background-size: 22px 22px;
+}
+
+.ect-hero__icon {
+	box-shadow: 0 0 0 6px rgba(255,255,255,.07), 0 0 0 12px rgba(255,255,255,.04);
+}
+
+/* ============================================================
+   CARD TITLE  — left accent bar
+   ============================================================ */
+
+.ect-card-title::before {
+	content: '';
+	flex-shrink: 0;
+	width: 4px;
+	height: 1.1em;
+	background: #2271b1;
+	border-radius: 3px;
+}
+
+/* ============================================================
+   PAGE HEADER H1  — left brand accent
+   ============================================================ */
+
+.ect-page-header__body h1 {
+	padding-left: 12px;
+	border-left: 4px solid #2271b1;
+	border-radius: 1px;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media screen and (max-width: 960px) {
