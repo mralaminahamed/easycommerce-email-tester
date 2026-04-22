@@ -1376,11 +1376,6 @@
    PAGE HEADER H1  — left brand accent
    ============================================================ */
 
-.ect-page-header__body h1 {
-	padding-left: 14px;
-	border-left: 4px solid #2271b1;
-	border-radius: 1px;
-}
 
 /* ============================================================
    RESPONSIVE
