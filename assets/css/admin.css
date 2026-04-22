@@ -1360,17 +1360,8 @@
 }
 
 /* ============================================================
-   CARD TITLE  — left accent bar
+   CARD TITLE
    ============================================================ */
-
-.ect-card-title::before {
-	content: '';
-	flex-shrink: 0;
-	width: 4px;
-	height: 1.1em;
-	background: #2271b1;
-	border-radius: 3px;
-}
 
 /* ============================================================
    PAGE HEADER H1  — left brand accent
