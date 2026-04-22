@@ -8,6 +8,11 @@
 	padding-bottom: 48px;
 }
 
+/* Ensure WP .wrap right-margin doesn't create a double gap on our wrap */
+.wrap.ect-wrap {
+	margin-right: 20px;
+}
+
 /* ============================================================
    HERO  (Dashboard)
    ============================================================ */
@@ -1199,7 +1204,7 @@
 	background: #fff;
 	border: 1px solid #dcdcde;
 	border-radius: 6px;
-	padding: 5px;
+	padding: 6px;
 	margin: 16px 20px 20px 2px;
 	max-width: 1160px;
 	box-shadow: 0 1px 3px rgba(0,0,0,.05);
@@ -1209,7 +1214,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 7px;
-	padding: 7px 15px;
+	padding: 8px 16px;
 	border-radius: 4px;
 	font-size: 13px;
 	font-weight: 500;
@@ -1221,8 +1226,8 @@
 }
 
 .ect-page-nav__item .ect-icon {
-	width: 15px;
-	height: 15px;
+	width: 16px;
+	height: 16px;
 	flex-shrink: 0;
 	opacity: 0.7;
 }
@@ -1351,7 +1356,7 @@
 }
 
 .ect-hero__icon {
-	box-shadow: 0 0 0 6px rgba(255,255,255,.07), 0 0 0 12px rgba(255,255,255,.04);
+	box-shadow: 0 0 0 6px rgba(255,255,255,.08), 0 0 0 12px rgba(255,255,255,.04);
 }
 
 /* ============================================================
@@ -1372,7 +1377,7 @@
    ============================================================ */
 
 .ect-page-header__body h1 {
-	padding-left: 12px;
+	padding-left: 14px;
 	border-left: 4px solid #2271b1;
 	border-radius: 1px;
 }
